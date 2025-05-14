@@ -36,9 +36,13 @@ public class WebBrowser {
      */
     private Session session;
     /**
-     * Lambdaでの実行環境であるかどうか.
+     * Lambda環境での実行であるかどうか.
      */
     private boolean isLambda = false;
+    /**
+     * GitHUB Actions環境での実行であるかどうか.
+     */
+    private boolean isGithubActions = false;
 
     /**
      * デフォルトコンストラクタ(ヘッドレスモードなし).
@@ -64,6 +68,8 @@ public class WebBrowser {
     public WebBrowser(final boolean isHeadlessMode) {
         // Lambda環境での実行かどうかを判定
         this.isLambda = System.getenv("AWS_LAMBDA_FUNCTION_NAME") != null;
+        // GitHub Actions環境での実行かどうかを判定
+        this.isGithubActions = Boolean.TRUE.toString().equals(System.getenv("GITHUB_ACTIONS"));
 
         // オプションを定義
         ChromeOptions options = new ChromeOptions();
@@ -74,7 +80,7 @@ public class WebBrowser {
                 "Chrome/122.0.0.0 Safari/537.36");
 
         // ヘッドレスモードの指定
-        if (isHeadlessMode && !this.isLambda) {
+        if (isHeadlessMode && !this.isLambda && !this.isGithubActions) {
             options.addArguments("--headless=new");
         }
 
@@ -93,8 +99,28 @@ public class WebBrowser {
             options.addArguments("--disable-setuid-sandbox");
             options.addArguments("--disable-blink-features=AutomationControlled");
             options.addArguments("--remote-debugging-port=9222");
-        } else {
-            // ローカルではChromeDriver を自動でセットアップ
+        }
+        // isGithubActionsで動かすときの設定（必ずヘッドレスモードになる）
+        else if (this.isGithubActions) {
+            // 環境変数からパスを取得
+            String CHROMEDRIVER_PATH = System.getenv("CHROMEDRIVER_PATH");
+            String CHROME_BINARY_PATH = System.getenv("CHROME_BINARY_PATH");
+            System.setProperty("webdriver.chrome.driver", CHROMEDRIVER_PATH);
+            options.setBinary(CHROME_BINARY_PATH);
+            options.addArguments("--headless");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--window-size=1280x1696");
+            options.addArguments("--single-process");
+            options.addArguments("--disable-extensions");
+            options.addArguments("--disable-dev-tools");
+            options.addArguments("--disable-setuid-sandbox");
+            options.addArguments("--disable-blink-features=AutomationControlled");
+            options.addArguments("--remote-debugging-port=9222");
+        }
+        // ローカルではChromeDriver を自動でセットアップ
+        else {
             WebDriverManager.chromedriver().setup();
         }
 

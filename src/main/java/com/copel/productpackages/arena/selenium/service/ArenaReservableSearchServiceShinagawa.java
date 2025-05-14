@@ -191,6 +191,9 @@ public class ArenaReservableSearchServiceShinagawa {
                 log.info("LINEに通知を送信");
             }
         } catch (Exception e) {
+            // ドライバを閉じる
+            this.webBrowser.quit();
+
             log.error("品川区の体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
             e.printStackTrace();
 

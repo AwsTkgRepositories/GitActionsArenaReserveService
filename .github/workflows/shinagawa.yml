@@ -10,10 +10,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE Notifyのアクセストークン
-      NOTIFY_LINE_ID: ${{ secrets.NOTIFY_LINE_ID }} # LINE Notifyの通知先ID
-
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
@@ -40,8 +36,26 @@ jobs:
         with:
           chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
 
+      - name: パスを取得して環境変数にセット
+        id: get_paths
+        run: |
+          CHROME_PATH=$(which google-chrome)
+          CHROMEDRIVER_PATH=$(which chromedriver)
+          echo "CHROME_PATH=$CHROME_PATH" >> $GITHUB_OUTPUT
+          echo "CHROMEDRIVER_PATH=$CHROMEDRIVER_PATH" >> $GITHUB_OUTPUT
+
+      - name: パスの確認（デバッグ用）
+        run: |
+          echo "Chrome: ${{ steps.get_paths.outputs.CHROME_PATH }}"
+          echo "ChromeDriver: ${{ steps.get_paths.outputs.CHROMEDRIVER_PATH }}"
+
       - name: Mavenパッケージをビルド
         run: mvn clean package
 
       - name: 処理を実行
+        env:
+          CHROME_BINARY_PATH: ${{ steps.get_paths.outputs.CHROME_PATH }} # Chromeのパス
+          CHROMEDRIVER_PATH: ${{ steps.get_paths.outputs.CHROMEDRIVER_PATH }} # ChromeDriverのパス
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE Notifyのアクセストークン
+          NOTIFY_LINE_ID: ${{ secrets.NOTIFY_LINE_ID }} # LINE Notifyの通知先ID
         run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
