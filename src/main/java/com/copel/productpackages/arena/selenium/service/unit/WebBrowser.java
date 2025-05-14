@@ -104,17 +104,10 @@ public class WebBrowser {
         else if (this.isGithubActions) {
             System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
             options.setBinary("/usr/bin/google-chrome");
-            options.addArguments("--headless");
+            options.addArguments("--headless=new");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
-            options.addArguments("--window-size=1280x1696");
-            options.addArguments("--single-process");
-            options.addArguments("--disable-extensions");
-            options.addArguments("--disable-dev-tools");
-            options.addArguments("--disable-setuid-sandbox");
-            options.addArguments("--disable-blink-features=AutomationControlled");
-            options.addArguments("--remote-debugging-port=9222");
+            options.addArguments("--window-size=1280,1696");
         }
         // ローカルではChromeDriver を自動でセットアップ
         else {
