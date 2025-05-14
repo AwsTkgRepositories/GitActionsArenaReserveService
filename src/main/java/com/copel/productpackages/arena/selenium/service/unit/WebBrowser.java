@@ -102,11 +102,8 @@ public class WebBrowser {
         }
         // isGithubActionsで動かすときの設定（必ずヘッドレスモードになる）
         else if (this.isGithubActions) {
-            // 環境変数からパスを取得
-            String CHROMEDRIVER_PATH = System.getenv("CHROMEDRIVER_PATH");
-            String CHROME_BINARY_PATH = System.getenv("CHROME_BINARY_PATH");
-            System.setProperty("webdriver.chrome.driver", CHROMEDRIVER_PATH);
-            options.setBinary(CHROME_BINARY_PATH);
+            System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+            options.setBinary("/usr/bin/google-chrome");
             options.addArguments("--headless");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
