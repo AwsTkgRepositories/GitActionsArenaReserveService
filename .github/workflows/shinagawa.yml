@@ -1,0 +1,38 @@
+name: 品川区予約可能一覧取得 (GitActionsArenaReserveService)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # 毎日0時 (UTC)：日本時間9:00に実行
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE Notifyのアクセストークン
+      NOTIFY_LINE_ID: ${{ secrets.NOTIFY_LINE_ID }} # LINE Notifyの通知先ID
+
+    steps:
+      - name: コードをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Java17をセットアップ
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Chromeをインストール
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: ChromeDriverをセットアップ
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: 'latest'
+
+      - name: 処理を実行
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa"
