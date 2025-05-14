@@ -29,10 +29,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
+      - name: Chromeのバージョンを取得
+        id: get_chrome_version
+        run: |
+          version=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          echo "chrome_version=$version" >> $GITHUB_OUTPUT
+
       - name: ChromeDriverをセットアップ
         uses: nanasess/setup-chromedriver@v2
         with:
-          chromedriver-version: 'latest'
+          chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
 
       - name: 処理を実行
         run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa"
