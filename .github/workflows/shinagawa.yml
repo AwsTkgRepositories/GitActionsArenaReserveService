@@ -40,5 +40,8 @@ jobs:
         with:
           chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
 
+      - name: Mavenパッケージをビルド
+        run: mvn clean package
+
       - name: 処理を実行
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa"
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
