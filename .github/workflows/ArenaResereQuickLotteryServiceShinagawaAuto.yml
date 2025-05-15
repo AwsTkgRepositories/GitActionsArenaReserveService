@@ -1,22 +1,29 @@
-name: 【品川区】予約可能一覧取得 (GitActionsArenaReserveService)
+name: 【品川区】早押し抽選予約・自動 (GitActionsArenaReserveService)
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '30 0 * * *' # 毎日0時30分（UTC）＝日本時間9時30分に実行
+    - cron: '55 1 * * *' # 毎日1時55分（UTC）＝日本時間9時55分に実行
 
 jobs:
-  ArenaReservableSearchServiceShinagawa:
+  ArenaResereQuickLotteryServiceShinagawaAuto:
     runs-on: ubuntu-latest
     env:
       LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE Notifyのアクセストークン
       NOTIFY_LINE_ID: ${{ secrets.NOTIFY_LINE_ID }} # LINE Notifyの通知先ID
+      ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} # 品川区の団体登録ID
+      ACCOUNT_PASSWORD: ${{ secrets.ACCOUNT_PASSWORD }} # 品川区の団体登録パスワード
     steps:
       - name: 開始時間を記録
         id: start
         run: |
           echo "##[group]ジョブ開始時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
           echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: 入力値の確認
+        run: |
+          echo "体育館名： ${{ github.event.inputs.arenaName }}"
+          echo "時間枠： ${{ github.event.inputs.timeSlot }}"
 
       - name: コードをチェックアウト
         uses: actions/checkout@v3
@@ -46,20 +53,14 @@ jobs:
       - name: Mavenパッケージをビルド(テストコードはコンパイルしない)
         run: mvn clean package -Dmaven.test.skip=true
 
-      - name: スクエア荏原の空き状況を取得
+      - name: 予約処理を実行
         env:
           TARGET_ARENA_NAME: スクエア荏原
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
-
-      - name: 戸越体育館の空き状況を取得
-        env:
-          TARGET_ARENA_NAME: 戸越体育館
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
-
-      - name: 品川総合体育館の空き状況を取得
-        env:
-          TARGET_ARENA_NAME: 総合体育館
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
+          TARGET_COURT_NAME: 全面
+        run: |
+          echo "TARGET_ARENA_NAME = $TARGET_ARENA_NAME"
+          echo "TARGET_COURT_NAME = $TARGET_COURT_NAME"
+          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaResereQuickLotteryServiceShinagawaAuto" -Dexec.classpathScope=runtime
 
       - name: 終了時間を記録
         run: |

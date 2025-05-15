@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate;
@@ -11,18 +12,17 @@ import com.copel.productpackages.arena.selenium.service.entity.unit.品川区体
 import com.copel.productpackages.arena.selenium.service.entity.unit.品川区抽選枠;
 import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 品川区の早押し抽選処理クラス.
+ * 品川区の早押し抽選処理クラス（自動予約）.
  *
  * @author 鈴木一矢
  *
  */
 @Slf4j
-public class ArenaResereQuickLotteryServiceShinagawa {
+public class ArenaResereQuickLotteryServiceShinagawaAuto {
     /**
      * 環境変数.
      * 通知用LINEアカウントのチャンネルアクセストークン.
@@ -54,11 +54,6 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      */
     private static String TARGET_COURT_NAME = System.getenv("TARGET_COURT_NAME");
     /**
-     * 環境変数.
-     * GitHUB Actionsに入力された対象時間枠名.
-     */
-    private static String TARGET_TIME_SLOT = System.getenv("TARGET_TIME_SLOT");
-    /**
      * 定数.
      * 早押し抽選開始時刻の時.
      */
@@ -77,15 +72,14 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      * @throws InterruptedException 
      */
     public static void main(String[] args) throws InterruptedException, IOException {
-        ArenaResereQuickLotteryServiceShinagawa service
-            = new ArenaResereQuickLotteryServiceShinagawa(
+        ArenaResereQuickLotteryServiceShinagawaAuto service
+            = new ArenaResereQuickLotteryServiceShinagawaAuto(
                     LINE_CHANNEL_ACCESS_TOKEN, 
                     NOTIFY_LINE_ID,
                     ACCOUNT_ID,
                     ACCOUNT_PASSWORD,
                     品川区体育館.getEnumByName(TARGET_ARENA_NAME),
-                    TARGET_COURT_NAME,
-                    品川区抽選枠.getEnumByName(TARGET_TIME_SLOT));
+                    TARGET_COURT_NAME);
         service.execute();
     }
 
@@ -120,12 +114,12 @@ public class ArenaResereQuickLotteryServiceShinagawa {
     /**
      * 予約対象の枠.
      */
-    private 品川区抽選枠 予約対象;
+    private 品川区抽選枠 予約対象枠;
 
     /**
      * コンストラクタ.
      */
-    public ArenaResereQuickLotteryServiceShinagawa(final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final 品川区体育館 targetArena, final String targetCourtName, final 品川区抽選枠 予約対象) {
+    public ArenaResereQuickLotteryServiceShinagawaAuto(final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final 品川区体育館 targetArena, final String targetCourtName) {
         this.webBrowser = new WebBrowser(true);
         this.toLineId = toLineId;
         this.channelAccessToken = channelAccessToken;
@@ -133,9 +127,8 @@ public class ArenaResereQuickLotteryServiceShinagawa {
         this.accountPassword = accountPassword;
         this.targetArena = targetArena;
         this.targetCourtName = targetCourtName;
-        this.予約対象 = 予約対象;
     }
-    public ArenaResereQuickLotteryServiceShinagawa(final boolean isHeadlessMode, final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final 品川区体育館 targetArena, final String targetCourtName, final 品川区抽選枠 予約対象) {
+    public ArenaResereQuickLotteryServiceShinagawaAuto(final boolean isHeadlessMode, final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final 品川区体育館 targetArena, final String targetCourtName) {
         this.webBrowser = new WebBrowser(isHeadlessMode);
         this.toLineId = toLineId;
         this.channelAccessToken = channelAccessToken;
@@ -143,7 +136,6 @@ public class ArenaResereQuickLotteryServiceShinagawa {
         this.accountPassword = accountPassword;
         this.targetArena = targetArena;
         this.targetCourtName = targetCourtName;
-        this.予約対象 = 予約対象;
     }
 
     /**
@@ -153,12 +145,19 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      * @throws IOException
      */
     public void execute() throws InterruptedException, IOException {
-        // (0) URL先へアクセスする
-        this.webBrowser.access("https://www.cm9.eprs.jp/shinagawa/web/");
-
         // 2ヵ月後同日の日付を作成
         OriginalDate dateAfterTwoMonth = new OriginalDate();
         dateAfterTwoMonth.plusMonths(2);
+
+        // 土日祝日ではない枠の場合、処理をせず終了
+        if (!dateAfterTwoMonth.is土日() && !dateAfterTwoMonth.is祝日()) {
+            this.webBrowser.quit();
+            log.info(dateAfterTwoMonth.toDisplayString() + "は土日祝日ではないため、早押し抽選処理をせず終了しました");
+            return;
+        }
+
+        // (0) URL先へアクセスする
+        this.webBrowser.access("https://www.cm9.eprs.jp/shinagawa/web/");
 
         try {
             // (1) 検索条件画面
@@ -185,6 +184,25 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             // 念のため、3秒ロード待機
             this.webBrowser.wait(3);
 
+            // 空き状況を取得（夜間は日曜夜間や祝日夜間はなるべく取りたくないため一旦コメントアウト）
+            Map<品川区抽選枠, String> 枠ステータス = Map.of(
+                品川区抽選枠.午前, this.webBrowser.getAltAttributeByXpath(品川区抽選枠.午前.getButtonXpathAfterTwoMonth()),
+                品川区抽選枠.午後1, this.webBrowser.getAltAttributeByXpath(品川区抽選枠.午後1.getButtonXpathAfterTwoMonth()),
+                品川区抽選枠.午後2, this.webBrowser.getAltAttributeByXpath(品川区抽選枠.午後2.getButtonXpathAfterTwoMonth())
+            );
+            this.予約対象枠 = 枠ステータス.entrySet().stream()
+                .filter(e -> "空き".equals(e.getValue()))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+
+            // 空きがない場合、処理終了
+            if (this.予約対象枠 == null) {
+                this.webBrowser.quit();
+                log.info(dateAfterTwoMonth.toDisplayString() + "に空きがないため、早押し抽選処理を終了します");
+                return;
+            }
+
             // 開始時刻と現在時刻の差分を作成する
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"));
             ZonedDateTime targetTime = now.withHour(START_TIME_HOUR).withMinute(START_TIME_MINUTE).withSecond(1).withNano(0);
@@ -193,7 +211,6 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             // 開始時刻以降に実行された場合、処理終了する
             if (now.isAfter(targetTime)) {
                 log.info("日本時間" + Integer.toString(START_TIME_HOUR) + ":" + Integer.toString(START_TIME_MINUTE) + "以降に実行されたため、処理を終了します");
-                // ドライバを閉じる
                 this.webBrowser.quit();
                 return;
             }
@@ -229,24 +246,13 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             this.webBrowser.selectOptionByXpath("//*[@id=\"facility-select\"]", this.targetArena.getDisplayWithCourtName(this.targetCourtName));
             log.info("「施設」でアリーナ" + this.targetArena.getDisplayWithCourtName(this.targetCourtName) + "を選択");
 
-            // 予約しようとしている対象の枠が空きではなかった場合、処理終了
-            String status = this.webBrowser.getAltAttributeByXpath(this.予約対象.getButtonXpathAfterTwoMonth());
-            if (!"空き".equals(status)) {
-                log.error(dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "は空いていないため、早押し抽選での予約ができませんでした。");
-                // エラーをLINEに通知
-                LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-                lineMessagingAPI.addMessage("【品川区】\\n【早押し抽選結果】\\n\\n" + dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "\\n" + this.targetArena.getDisplayWithCourtName(this.targetCourtName) + "\\nは空いていないため、予約できませんでした。");
-                lineMessagingAPI.sendSeparate();
-                return;
-            }
-
             // 予約枠選択
-            this.webBrowser.clickByXpath(this.予約対象.getButtonXpathAfterTwoMonth());
-            log.info("枠「" + this.予約対象.getButtonXpathAfterTwoMonth() + "」を選択");
+            this.webBrowser.clickByXpath(this.予約対象枠.getButtonXpathAfterTwoMonth());
+            log.info("枠「" + this.予約対象枠.getButtonXpathAfterTwoMonth() + "」を選択");
 
             // 予約枠選択時の描画の変化を待機する
-            this.webBrowser.waitForInputValueChange(this.予約対象.getInputXpathAfterTwoMonth(), "1");
-            log.info("枠「" + this.予約対象.getInputXpathAfterTwoMonth() + "」が選択後の値に変化しました");
+            this.webBrowser.waitForInputValueChange(this.予約対象枠.getInputXpathAfterTwoMonth(), "1");
+            log.info("枠「" + this.予約対象枠.getInputXpathAfterTwoMonth() + "」が選択後の値に変化しました");
 
             // 予約ボタン押下
             this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
@@ -282,25 +288,18 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             // ドライバを閉じる
             this.webBrowser.quit();
         } catch (Exception e) {
-            // ドライバを閉じる
             this.webBrowser.quit();
 
-            log.error("早押し抽選の参加中にエラーが発生したため、予約ができませんでした。");
+            log.error("自動早押し抽選の参加中にエラーが発生したため、予約ができませんでした。");
             e.printStackTrace();
-
-            // エラーをLINEに通知
-            LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-            lineMessagingAPI.addMessage("【品川区】\\n【早押し抽選結果】\\n\\n" + dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "\\n" + this.targetArena.getDisplayWithCourtName(this.targetCourtName) + "\\nの予約中にエラーが発生しました。エラーメッセージは以下です。");
-            lineMessagingAPI.addMessage(new ObjectMapper().writeValueAsString(e.getMessage()));
-            lineMessagingAPI.sendSeparate();
             return;
         }
 
         // 抽選結果結果をLINEに送信
         LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-        lineMessagingAPI.addMessage("【品川区】\\n【早押し抽選結果】\\n\\n" + dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "\\n" + this.targetArena.getDisplayWithCourtName(this.targetCourtName) + "\\nの早押し抽選に参加しました。結果は以下を確認してください。\\n");
+        lineMessagingAPI.addMessage("【品川区】\\n【自動早押し抽選結果】\\n\\n" + dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象枠.name() + "\\n" + this.targetArena.getDisplayWithCourtName(this.targetCourtName) + "\\nの早押し抽選に自動で参加しました。結果は以下を確認してください。\\n");
         lineMessagingAPI.addMessage("https://www.cm9.eprs.jp/shinagawa/web/");
         lineMessagingAPI.sendAll();
-        log.info("LINEに通知を送信");
+        log.info("LINEに通知を送信しました");
     }
 }
