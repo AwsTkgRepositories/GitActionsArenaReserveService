@@ -122,6 +122,7 @@ public class ArenaReservableSearchServiceShinagawa {
 
                     if (!slot.is予約閲覧対象()) {
                         log.info("予約可能な全ての日付をチェックしました");
+                        this.webBrowser.quit(); // ドライバを閉じる
                         break;
                     } else {
                         // 午後1の枠を取得
@@ -184,12 +185,9 @@ public class ArenaReservableSearchServiceShinagawa {
                 }
             }
 
-            // ドライバを閉じる
-            this.webBrowser.quit();
-
             // 検索結果をLINEに送信
             LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-            lineMessagingAPI.addMessage("【スクエア荏原】");
+            lineMessagingAPI.addMessage("【スクエア荏原】\\n\\n");
             lineMessagingAPI.addMessage(resultLot.toString());
             lineMessagingAPI.sendAll();
             log.info("LINEに通知を送信");

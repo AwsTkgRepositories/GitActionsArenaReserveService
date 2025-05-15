@@ -123,7 +123,7 @@ public class WebBrowser {
         );
 
         // WebDriverWaitを作成
-        this.wait = new WebDriverWait(this.driver, Duration.ofSeconds(15));
+        this.wait = new WebDriverWait(this.driver, Duration.ofSeconds(5));
     }
 
     /**
