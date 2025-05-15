@@ -11,7 +11,7 @@ on:
         options:
           - スクエア荏原
           - 戸越体育館
-          - 品川総合体育館
+          - 総合体育館
       courtName:
         description: 'コートを選択してください'
         required: true

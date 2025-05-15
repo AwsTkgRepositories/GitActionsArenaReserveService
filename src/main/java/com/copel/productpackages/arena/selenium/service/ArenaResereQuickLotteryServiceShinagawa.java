@@ -8,6 +8,7 @@ import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate
 import com.copel.productpackages.arena.selenium.service.entity.unit.品川区抽選枠;
 import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -183,11 +184,11 @@ public class ArenaResereQuickLotteryServiceShinagawa {
 
             // 利用者番号入力
             this.webBrowser.sendKeysByXpath("//*[@id=\"userId\"]", this.accountId);
-            log.info("「利用者番号」を入力");
+            log.info("「利用者番号」で" + this.accountId + "を入力");
 
             // パスワード入力
             this.webBrowser.sendKeysByXpath("//*[@id=\"password\"]", this.accountPassword);
-            log.info("「パスワード」を入力");
+            log.info("「パスワード」で" + this.accountPassword + "を入力");
 
             // ログインボタン押下
             this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
@@ -195,16 +196,16 @@ public class ArenaResereQuickLotteryServiceShinagawa {
 
             // 「館」を選択
             this.webBrowser.selectOptionByXpath("//*[@id=\"mansion-select\"]", this.targetArenaName);
-            log.info("「館」を選択");
+            log.info("「館」で" + this.targetArenaName + "を選択");
 
             // 「施設」を選択
-            this.webBrowser.selectOptionByXpath("//*[@id=\"facility-select\"]", "アリーナ" + this.targetCourtName);
-            log.info("「施設」を選択");
+            this.webBrowser.selectOptionByXpath("//*[@id=\"facility-select\"]", "アリーナ" + this.targetCourtName); // スクエア荏原はアリーナXX、戸越と総合は主競技場XX
+            log.info("「施設」でアリーナ" + this.targetCourtName + "を選択");
 
             // 予約枠選択
             try {
                 this.webBrowser.clickByXpath(this.予約対象.getButtonXpathAfterTwoMonth());
-                log.info("枠を選択");
+                log.info("枠「" + this.予約対象.getButtonXpathAfterTwoMonth() + "」を選択");
             } catch (NoSuchElementException e) {
                 log.error(dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "は空いていないため、早押し抽選での予約ができませんでした。");
                 // エラーをLINEに通知
@@ -250,7 +251,7 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             // エラーをLINEに通知
             LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
             lineMessagingAPI.addMessage("早押し抽選の参加中にエラーが発生したため、予約ができませんでした。エラーメッセージを送ります。");
-            lineMessagingAPI.addMessage(e.getMessage());
+            lineMessagingAPI.addMessage(new ObjectMapper().writeValueAsString(e.getMessage()));
             lineMessagingAPI.sendSeparate();
             return;
         }
