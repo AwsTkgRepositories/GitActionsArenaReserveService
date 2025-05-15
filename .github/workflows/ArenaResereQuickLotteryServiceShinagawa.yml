@@ -3,7 +3,7 @@ name: 品川区早押し抽選予約 (GitActionsArenaReserveService)
 on:
   workflow_dispatch:
     inputs:
-      userName:
+      arenaName:
         description: '体育館を選択してください'
         required: true
         default: 'スクエア荏原・全面'
@@ -18,7 +18,7 @@ on:
           - 品川総合体育館・全面
           - 品川総合体育館・半面1
           - 品川総合体育館・半面2
-      runMode:
+      timeSlot:
         description: '時間枠を選択してください'
         required: true
         default: '午前'
@@ -35,5 +35,5 @@ jobs:
     steps:
       - name: 入力値の確認
         run: |
-          echo "UserName is ${{ github.event.inputs.userName }}"
-          echo "Run mode is ${{ github.event.inputs.runMode }}"
+          echo "体育館名： ${{ github.event.inputs.arenaName }}"
+          echo "時間枠： ${{ github.event.inputs.timeSlot }}"
