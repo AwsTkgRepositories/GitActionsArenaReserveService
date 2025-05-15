@@ -10,6 +10,7 @@ import com.copel.productpackages.arena.selenium.service.entity.ReservationSlotLo
 import com.copel.productpackages.arena.selenium.service.entity.TimeSlot;
 import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDateTime;
 import com.copel.productpackages.arena.selenium.service.entity.unit.ReserveStatus;
+import com.copel.productpackages.arena.selenium.service.entity.unit.品川区体育館;
 import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
 
@@ -33,6 +34,11 @@ public class ArenaReservableSearchServiceShinagawa {
      * 通知の宛先LINE ID.
      */
     private static String NOTIFY_LINE_ID = System.getenv("NOTIFY_LINE_ID");
+    /**
+     * 環境変数.
+     * GitHUB Actionsに入力された対象体育館名.
+     */
+    private static String TARGET_ARENA_NAME = System.getenv("TARGET_ARENA_NAME");
 
     /**
      * メイン文.
@@ -43,7 +49,10 @@ public class ArenaReservableSearchServiceShinagawa {
      */
     public static void main(String[] args) throws InterruptedException, IOException {
         ArenaReservableSearchServiceShinagawa service
-            = new ArenaReservableSearchServiceShinagawa(LINE_CHANNEL_ACCESS_TOKEN, NOTIFY_LINE_ID);
+            = new ArenaReservableSearchServiceShinagawa(
+                    LINE_CHANNEL_ACCESS_TOKEN,
+                    NOTIFY_LINE_ID,
+                    品川区体育館.getEnumByName(TARGET_ARENA_NAME));
         service.execute();
     }
 
@@ -59,14 +68,19 @@ public class ArenaReservableSearchServiceShinagawa {
      * チャンネルアクセストークン.
      */
     private String channelAccessToken;
+    /**
+     * 予約対象の体育館.
+     */
+    private 品川区体育館 targetArena;
 
     /**
      * コンストラクタ.
      */
-    public ArenaReservableSearchServiceShinagawa(final String channelAccessToken, final String toLineId) {
+    public ArenaReservableSearchServiceShinagawa(final String channelAccessToken, final String toLineId, final 品川区体育館 targetArena) {
         this.webBrowser = new WebBrowser(true);
         this.toLineId = toLineId;
         this.channelAccessToken = channelAccessToken;
+        this.targetArena = targetArena;
     }
 
     /**
@@ -85,7 +99,7 @@ public class ArenaReservableSearchServiceShinagawa {
             this.webBrowser.clickByXpath("//*[@id=\"when-check-area\"]/label[4]");
             log.info("検索条件「いつ」を選択");
             // 検索条件「どこで」を選択
-            this.webBrowser.selectOptionByXpath("//*[@id=\"bname\"]", "スクエア荏原");
+            this.webBrowser.selectOptionByXpath("//*[@id=\"bname\"]", this.targetArena.name());
             log.info("検索条件「どこで」を選択");
             // 検索条件「何をする」を選択
             this.webBrowser.selectOptionByXpath("//*[@id=\"purpose\"]", "バスケットボール");
@@ -122,7 +136,7 @@ public class ArenaReservableSearchServiceShinagawa {
 
                     if (!slot.is予約閲覧対象()) {
                         log.info("予約可能な全ての日付をチェックしました");
-                        this.webBrowser.quit(); // ドライバを閉じる
+                        this.webBrowser.quit();
                         break;
                     } else {
                         // 午後1の枠を取得
@@ -187,7 +201,7 @@ public class ArenaReservableSearchServiceShinagawa {
 
             // 検索結果をLINEに送信
             LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-            lineMessagingAPI.addMessage("【スクエア荏原】\\n\\n");
+            lineMessagingAPI.addMessage("【品川区】\\n【" + this.targetArena.name() + "】\\n\\n");
             lineMessagingAPI.addMessage(resultLot.toString());
             lineMessagingAPI.sendAll();
             log.info("LINEに通知を送信");
@@ -200,7 +214,7 @@ public class ArenaReservableSearchServiceShinagawa {
 
             // エラーをLINEに通知
             LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-            lineMessagingAPI.addMessage("品川区の体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
+            lineMessagingAPI.addMessage("【品川区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
             lineMessagingAPI.addMessage(e.getMessage());
             lineMessagingAPI.sendSeparate();
         }

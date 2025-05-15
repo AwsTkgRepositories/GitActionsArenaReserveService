@@ -3,7 +3,7 @@ name: 【品川区】予約可能一覧取得 (GitActionsArenaReserveService)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # 毎日0時 (UTC)：日本時間9:00に実行
+    - cron: '30 0 * * *' # 毎日0時30分（UTC）＝日本時間9時30分
 
 jobs:
   ArenaReservableSearchServiceShinagawa:
@@ -38,7 +38,7 @@ jobs:
           version=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
           echo "chrome_version=$version" >> $GITHUB_OUTPUT
 
-      - name: ChromeDriverをセットアップ
+      - name: ChromeDriverをセットアップ（Chromeのバージョンに合わせる）
         uses: nanasess/setup-chromedriver@v2
         with:
           chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
@@ -46,7 +46,19 @@ jobs:
       - name: Mavenパッケージをビルド(テストコードはコンパイルしない)
         run: mvn clean package -Dmaven.test.skip=true
 
-      - name: 処理を実行
+      - name: スクエア荏原の空き状況を取得
+        env:
+          TARGET_ARENA_NAME: スクエア荏原
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
+
+      - name: 戸越体育館の空き状況を取得
+        env:
+          TARGET_ARENA_NAME: 戸越体育館
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
+
+      - name: 品川総合体育館の空き状況を取得
+        env:
+          TARGET_ARENA_NAME: 総合体育館
         run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
 
       - name: 終了時間を記録

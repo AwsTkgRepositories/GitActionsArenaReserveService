@@ -72,7 +72,7 @@ jobs:
           version=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
           echo "chrome_version=$version" >> $GITHUB_OUTPUT
 
-      - name: ChromeDriverをセットアップ
+      - name: ChromeDriverをセットアップ（Chromeのバージョンに合わせる）
         uses: nanasess/setup-chromedriver@v2
         with:
           chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
