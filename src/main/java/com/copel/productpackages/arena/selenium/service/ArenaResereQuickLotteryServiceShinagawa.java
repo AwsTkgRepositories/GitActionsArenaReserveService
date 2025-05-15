@@ -1,6 +1,10 @@
 package com.copel.productpackages.arena.selenium.service;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.concurrent.TimeUnit;
 
 import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate;
 import com.copel.productpackages.arena.selenium.service.entity.unit.品川区体育館;
@@ -54,6 +58,16 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      * GitHUB Actionsに入力された対象時間枠名.
      */
     private static String TARGET_TIME_SLOT = System.getenv("TARGET_TIME_SLOT");
+    /**
+     * 定数.
+     * 早押し抽選開始時刻の時.
+     */
+    private static int START_TIME_HOUR = 10;
+    /**
+     * 定数.
+     * 早押し抽選開始時刻の分.
+     */
+    private static int START_TIME_MINUTE = 00;
 
     /**
      * メイン文.
@@ -171,11 +185,23 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             // 念のため、3秒ロード待機
             this.webBrowser.wait(3);
 
-            log.info("抽選開始時刻まで待機中です...");
+            // 開始時刻と現在時刻の差分を作成する
+            ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"));
+            ZonedDateTime targetTime = now.withHour(START_TIME_HOUR).withMinute(START_TIME_MINUTE).withSecond(1).withNano(0);
+            Duration duration = Duration.between(now, targetTime);
 
-            // TODO：指定時刻ぴったりまで待機する
+            // 開始時刻以降に実行された場合、処理終了する
+            if (now.isAfter(targetTime)) {
+                log.info("日本時間" + Integer.toString(START_TIME_HOUR) + ":" + Integer.toString(START_TIME_MINUTE) + "以降に実行されたため、処理を終了します");
+                return;
+            }
 
-            log.info("早押しを開始します");
+            // 日本時間で開始時刻まで待機する（バッファを持ち1秒遅れスタートさせる）
+            log.info("日本時間" + Integer.toString(START_TIME_HOUR) + ":" + Integer.toString(START_TIME_MINUTE) + "まで " + duration.toSeconds() + " 秒待機します...");
+            TimeUnit.MILLISECONDS.sleep(duration.toMillis());
+
+            // 開始時刻になったら処理を再開
+            log.info("日本時間" + Integer.toString(START_TIME_HOUR) + ":" + Integer.toString(START_TIME_MINUTE) + "になったため、早押し処理を開始します");
 
             // ログインボタンを押下
             this.webBrowser.clickByXpath("//*[@id=\"btn-login\"]");
