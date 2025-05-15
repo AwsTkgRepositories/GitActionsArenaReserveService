@@ -1,0 +1,84 @@
+name: 【品川区】毎月の抽選申し込み (GitActionsArenaReserveService)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 20 * *' # 毎月20日11時（JST）
+
+jobs:
+  ArenaResereMonthlyLotteryServiceShinagawa:
+    runs-on: ubuntu-latest
+    env:
+      LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE Notifyのアクセストークン
+      NOTIFY_LINE_ID: ${{ secrets.NOTIFY_LINE_ID }} # LINE Notifyの通知先ID
+      ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} # 品川区の団体登録ID
+      ACCOUNT_PASSWORD: ${{ secrets.ACCOUNT_PASSWORD }} # 品川区の団体登録パスワード
+    steps:
+      - name: 開始時間を記録
+        id: start
+        run: |
+          echo "##[group]ジョブ開始時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
+          echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: 入力値の確認
+        run: |
+          echo "体育館名： ${{ github.event.inputs.arenaName }}"
+          echo "時間枠： ${{ github.event.inputs.timeSlot }}"
+
+      - name: コードをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Java17をセットアップ
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Chromeをインストール
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Chromeのバージョンを取得
+        id: get_chrome_version
+        run: |
+          version=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          echo "chrome_version=$version" >> $GITHUB_OUTPUT
+
+      - name: ChromeDriverをセットアップ（Chromeのバージョンに合わせる）
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
+
+      - name: Mavenパッケージをビルド(テストコードはコンパイルしない)
+        run: mvn clean package -Dmaven.test.skip=true
+
+      - name: スクエア荏原の毎月抽選の申し込み処理を実行
+        env:
+          TARGET_ARENA_NAME: スクエア荏原
+        run: |
+          echo "TARGET_ARENA_NAME = $TARGET_ARENA_NAME"
+          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaResereMonthlyLotteryServiceShinagawa" -Dexec.classpathScope=runtime
+
+      - name: 総合体育館の毎月抽選の申し込み処理を実行
+        env:
+          TARGET_ARENA_NAME: 総合体育館
+        run: |
+          echo "TARGET_ARENA_NAME = $TARGET_ARENA_NAME"
+          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaResereMonthlyLotteryServiceShinagawa" -Dexec.classpathScope=runtime
+
+      - name: 戸越体育館の毎月抽選の申し込み処理を実行
+        env:
+          TARGET_ARENA_NAME: 戸越体育館
+        run: |
+          echo "TARGET_ARENA_NAME = $TARGET_ARENA_NAME"
+          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaResereMonthlyLotteryServiceShinagawa" -Dexec.classpathScope=runtime
+
+      - name: 終了時間を記録
+        run: |
+          echo "##[group]ジョブ終了時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "実行時間は ${DURATION} 秒でした。"
+        env:
+          START_TIME: ${{ env.START_TIME }}
