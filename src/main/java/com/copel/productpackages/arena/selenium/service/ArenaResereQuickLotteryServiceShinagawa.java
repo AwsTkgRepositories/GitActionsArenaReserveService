@@ -193,6 +193,8 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             // 開始時刻以降に実行された場合、処理終了する
             if (now.isAfter(targetTime)) {
                 log.info("日本時間" + Integer.toString(START_TIME_HOUR) + ":" + Integer.toString(START_TIME_MINUTE) + "以降に実行されたため、処理を終了します");
+                // ドライバを閉じる
+                this.webBrowser.quit();
                 return;
             }
 
