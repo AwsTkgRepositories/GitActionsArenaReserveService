@@ -1,0 +1,26 @@
+name: 品川区早押し抽選予約 (GitActionsArenaReserveService)
+
+on:
+  workflow_dispatch:
+    inputs:
+      userName:
+        description: '操作者名を入力してください'
+        required: true
+        default: 'defaultUser'
+      runMode:
+        description: '実行モードを選択してください'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - production
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show input values
+        run: |
+          echo "UserName is ${{ github.event.inputs.userName }}"
+          echo "Run mode is ${{ github.event.inputs.runMode }}"

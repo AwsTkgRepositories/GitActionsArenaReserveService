@@ -30,6 +30,9 @@ public class OriginalDate {
      */
     private static final Set<LocalDate> holidays;
 
+    /**
+     * クラスロード時に祝日取得APIを実行し一覧を取得する.
+     */
     static {
         holidays = new HashSet<>();
         OriginalDateTime today = new OriginalDateTime();
@@ -103,6 +106,9 @@ public class OriginalDate {
         DateTimeFormatter.ofPattern("yyyyMMdd")
     );
 
+    public OriginalDate() {
+        this.date = LocalDate.now();
+    }
     public OriginalDate(final LocalDate date) {
         this.date = date;
     }
@@ -134,6 +140,35 @@ public class OriginalDate {
 
     public void setDate(final LocalDate date) {
         this.date = date;
+    }
+
+    /**
+     * 引数で指定した月を足す
+     *
+     * @param months 月
+     */
+    public void plusMonths(final int months) {
+        this.date = this.date.plusMonths(months);
+    }
+
+    /**
+     * yyyy-MM-ddにする.
+     *
+     * @return yyyy-MM-dd
+     */
+    public String toYYYYMMDDwithHyphen() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return this.date.format(formatter);
+    }
+
+    /**
+     * yyyyMMddにする.
+     *
+     * @return yyyyMMdd
+     */
+    public String toYYYYMMDD() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        return this.date.format(formatter);
     }
 
     /**

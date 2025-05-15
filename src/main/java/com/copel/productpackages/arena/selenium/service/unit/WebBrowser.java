@@ -234,6 +234,21 @@ public class WebBrowser {
     }
 
     /**
+     * カレンダーの入力項目に日付を入力する(XPathで探索).
+     * 
+     * @param xpath XPath
+     * @param date 日付 (例: "2025-05-15")
+     * @throws InterruptedException
+     */
+    public void inputDateByXpath(final String xpath, final String date) throws InterruptedException {
+        WebElement element = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+        // JavaScriptでvalueを直接設定し、changeイベントも発火させる
+        String script = "arguments[0].value='" + date + "';" +
+                        "arguments[0].dispatchEvent(new Event('change', { bubbles: true }));";
+        ((JavascriptExecutor) this.driver).executeScript(script, element);
+    }
+
+    /**
      * 引数の秒数だけ処理を待機する.
      *
      * @param second 待機秒数
