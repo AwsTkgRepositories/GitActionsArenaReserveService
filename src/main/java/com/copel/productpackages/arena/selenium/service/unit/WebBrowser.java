@@ -3,6 +3,7 @@ package com.copel.productpackages.arena.selenium.service.unit;
 import java.io.IOException;
 import java.time.Duration;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
@@ -243,6 +244,15 @@ public class WebBrowser {
         String script = "arguments[0].value='" + date + "';" +
                         "arguments[0].dispatchEvent(new Event('change', { bubbles: true }));";
         ((JavascriptExecutor) this.driver).executeScript(script, element);
+    }
+
+    /**
+     * アラートが表示されるまで待機してOKをクリックする.
+     */
+    public void waitForAlertAndAccept() {
+        this.wait.until(ExpectedConditions.alertIsPresent());
+        Alert alert = this.driver.switchTo().alert();
+        alert.accept();
     }
 
     /**

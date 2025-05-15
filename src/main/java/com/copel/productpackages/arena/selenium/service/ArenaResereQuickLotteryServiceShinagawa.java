@@ -67,7 +67,7 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      * 定数.
      * 早押し抽選開始時刻の分.
      */
-    private static int START_TIME_MINUTE = 00;
+    private static int START_TIME_MINUTE = 0;
 
     /**
      * メイン文.
@@ -226,7 +226,7 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             log.info("「館」で" + this.targetArena.name() + "を選択");
 
             // 「施設」を選択
-            this.webBrowser.selectOptionByXpath("//*[@id=\"facility-select\"]", "アリーナ" + this.targetArena.getDisplayWithCourtName(this.targetCourtName));
+            this.webBrowser.selectOptionByXpath("//*[@id=\"facility-select\"]", this.targetArena.getDisplayWithCourtName(this.targetCourtName));
             log.info("「施設」でアリーナ" + this.targetArena.getDisplayWithCourtName(this.targetCourtName) + "を選択");
 
             // 予約しようとしている対象の枠が空きではなかった場合、処理終了
@@ -268,9 +268,16 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             this.webBrowser.sendKeysByXpath("//*[@id=\"peoples0\"]", "20");
             log.info("「利用人数」を入力");
 
-            // 予約ボタン押下
-//            this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
-//            log.info("「予約」ボタンを押下");
+            // 送信ボタン押下
+            this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
+            log.info("「送信」ボタンを押下");
+
+            // アラートのOKを押下
+            this.webBrowser.waitForAlertAndAccept();
+            log.info("アラートのOKを押下");
+
+            this.webBrowser.wait(3);
+            log.info("早押し抽選処理は正常に終了しました");
 
             // ドライバを閉じる
             this.webBrowser.quit();
