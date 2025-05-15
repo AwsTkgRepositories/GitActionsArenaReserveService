@@ -1,13 +1,91 @@
 package com.copel.productpackages.arena.selenium.service.entity.unit;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class OriginalDate {
+    /**
+     * 祝日取得APIエンドポイント.
+     */
+    private static final String HOLIDAY_API_TEMPLATE = "https://date.nager.at/api/v3/PublicHolidays/%d/JP";
+    /**
+     * 祝日の一覧.
+     */
+    private static final Set<LocalDate> holidays;
+
+    static {
+        holidays = new HashSet<>();
+        OriginalDateTime today = new OriginalDateTime();
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(String.format(HOLIDAY_API_TEMPLATE, today.getYear())))
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                log.error("祝日APIの取得に失敗しました。HTTPステータス: " + response.statusCode());
+            }
+
+            String body = response.body();
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(body);
+
+            for (JsonNode node : root) {
+                String dateStr = node.get("date").asText(); // yyyy-MM-dd
+                LocalDate date = LocalDate.parse(dateStr);
+                holidays.add(date);
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // 来年の祝日を取得
+        today.plusDays(365);
+        request = HttpRequest.newBuilder()
+                .uri(URI.create(String.format(HOLIDAY_API_TEMPLATE, today.getYear())))
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                log.error("祝日APIの取得に失敗しました。HTTPステータス: " + response.statusCode());
+            }
+
+            String body = response.body();
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(body);
+
+            for (JsonNode node : root) {
+                String dateStr = node.get("date").asText(); // yyyy-MM-dd
+                LocalDate date = LocalDate.parse(dateStr);
+                holidays.add(date);
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * LodalDateインスタンス.
      */
@@ -25,10 +103,10 @@ public class OriginalDate {
         DateTimeFormatter.ofPattern("yyyyMMdd")
     );
 
-    public OriginalDate(LocalDate date) {
+    public OriginalDate(final LocalDate date) {
         this.date = date;
     }
-    public OriginalDate(String dateStr) {
+    public OriginalDate(final String dateStr) {
         for (DateTimeFormatter formatter : SUPPORTED_FORMATTERS) {
             try {
                 this.date = LocalDate.parse(dateStr, formatter);
@@ -36,20 +114,25 @@ public class OriginalDate {
                 // 無視して次のパターンを試す
             }
         }
-        throw new IllegalArgumentException("対応していない日付形式です: " + dateStr);
+        if (this.date == null) {
+            throw new IllegalArgumentException("対応していない日付形式です: " + dateStr);
+        }
     }
-
 
     public boolean is土日() {
         DayOfWeek dayOfWeek = this.date.getDayOfWeek();
         return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
     }
 
+    public boolean is祝日() {
+        return holidays.contains(this.date);
+    }
+
     public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(final LocalDate date) {
         this.date = date;
     }
 

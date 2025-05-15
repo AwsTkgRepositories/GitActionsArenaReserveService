@@ -156,6 +156,10 @@ public class OriginalDateTime implements Comparable<OriginalDateTime> {
         this.dateTime = this.dateTime.withMinute(minute);
     }
 
+    public int getYear() {
+        return this.dateTime.getYear();
+    }
+
     /**
      * このオブジェクトをOriginalDate型に変換し返却します.
      *

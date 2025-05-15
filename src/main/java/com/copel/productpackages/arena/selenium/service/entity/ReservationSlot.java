@@ -51,7 +51,7 @@ public class ReservationSlot {
      * @return 土日祝日であればtrue、そうでなければfalse
      */
     public boolean is土日祝日() {
-        return this.slotDate.is土日();
+        return this.slotDate.is土日() || this.slotDate.is祝日();
     }
 
     /**
