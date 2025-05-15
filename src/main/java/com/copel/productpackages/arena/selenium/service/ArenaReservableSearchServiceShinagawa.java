@@ -118,6 +118,7 @@ public class ArenaReservableSearchServiceShinagawa {
                     slot.setTimeSlot(timeSlot);
                     slot.setReserveStatus(ReserveStatus.getEnumByShinagawa(午前ステータス));
                     resultLot.add(slot);
+                    log.info(slot.toString());
 
                     if (!slot.is予約閲覧対象()) {
                         log.info("予約可能な全ての日付をチェックしました");
@@ -138,6 +139,7 @@ public class ArenaReservableSearchServiceShinagawa {
                         slot.setTimeSlot(timeSlot);
                         slot.setReserveStatus(ReserveStatus.getEnumByShinagawa(午後1ステータス));
                         resultLot.add(slot);
+                        log.info(slot.toString());
 
                         // 午後2の枠を取得
                         String 午後2ステータス = this.webBrowser.getAltAttributeByXpath("//*[@id=\"" + date.getYyyyMMddWithoutSlash() + "_30\"]/img");
@@ -154,6 +156,7 @@ public class ArenaReservableSearchServiceShinagawa {
                         slot.setTimeSlot(timeSlot);
                         slot.setReserveStatus(ReserveStatus.getEnumByShinagawa(午後2ステータス));
                         resultLot.add(slot);
+                        log.info(slot.toString());
 
                         // 夜間の枠を取得
                         String 夜間ステータス = this.webBrowser.getAltAttributeByXpath("//*[@id=\"" + date.getYyyyMMddWithoutSlash() + "_40\"]/img");
@@ -170,8 +173,8 @@ public class ArenaReservableSearchServiceShinagawa {
                         slot.setTimeSlot(timeSlot);
                         slot.setReserveStatus(ReserveStatus.getEnumByShinagawa(夜間ステータス));
                         resultLot.add(slot);
+                        log.info(slot.toString());
 
-                        log.info(date.toString() + "をチェックしました");
                         date.plusDays(1);
                     }
                 } catch (TimeoutException e) {
@@ -179,17 +182,17 @@ public class ArenaReservableSearchServiceShinagawa {
                     this.webBrowser.clickByXpath("//*[@id=\"next-week\"]");
                     log.info("「翌週」ボタンを押下");
                 }
-
-                // ドライバを閉じる
-                this.webBrowser.quit();
-
-                // 検索結果をLINEに送信
-                LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-                lineMessagingAPI.addMessage("【スクエア荏原】");
-                lineMessagingAPI.addMessage(resultLot.toString());
-                lineMessagingAPI.sendAll();
-                log.info("LINEに通知を送信");
             }
+
+            // ドライバを閉じる
+            this.webBrowser.quit();
+
+            // 検索結果をLINEに送信
+            LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
+            lineMessagingAPI.addMessage("【スクエア荏原】");
+            lineMessagingAPI.addMessage(resultLot.toString());
+            lineMessagingAPI.sendAll();
+            log.info("LINEに通知を送信");
         } catch (Exception e) {
             // ドライバを閉じる
             this.webBrowser.quit();
