@@ -1,8 +1,6 @@
 name: 品川区予約可能一覧取得 (GitActionsArenaReserveService)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *' # 毎日0時 (UTC)：日本時間9:00に実行
@@ -14,6 +12,12 @@ jobs:
       LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE Notifyのアクセストークン
       NOTIFY_LINE_ID: ${{ secrets.NOTIFY_LINE_ID }} # LINE Notifyの通知先ID
     steps:
+      - name: 開始時間を記録
+        id: start
+        run: |
+          echo "##[group]ジョブ開始時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
+          echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
       - name: コードをチェックアウト
         uses: actions/checkout@v3
 
@@ -44,3 +48,12 @@ jobs:
 
       - name: 処理を実行
         run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
+
+      - name: 終了時間を記録
+        run: |
+          echo "##[group]ジョブ終了時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "実行時間は ${DURATION} 秒でした。"
+        env:
+          START_TIME: ${{ env.START_TIME }}
