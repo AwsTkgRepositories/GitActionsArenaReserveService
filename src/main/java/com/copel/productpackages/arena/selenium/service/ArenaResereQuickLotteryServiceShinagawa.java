@@ -254,7 +254,7 @@ public class ArenaResereQuickLotteryServiceShinagawa {
 
             // エラーをLINEに通知
             LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-            lineMessagingAPI.addMessage("早押し抽選の参加中にエラーが発生したため、予約ができませんでした。エラーメッセージを送ります。");
+            lineMessagingAPI.addMessage("【早押し抽選結果】\\n\\n早押し抽選の参加中にエラーが発生したため、予約ができませんでした。エラーメッセージを送ります。");
             lineMessagingAPI.addMessage(new ObjectMapper().writeValueAsString(e.getMessage()));
             lineMessagingAPI.sendSeparate();
             return;
@@ -262,8 +262,8 @@ public class ArenaResereQuickLotteryServiceShinagawa {
 
         // 抽選結果結果をLINEに送信
         LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-        lineMessagingAPI.addMessage("【早押し抽選結果】");
-        lineMessagingAPI.addMessage(dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "の早押し抽選に参加しました。結果は以下を確認してください。");
+        lineMessagingAPI.addMessage("【早押し抽選結果】\\n\\n");
+        lineMessagingAPI.addMessage(dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "の早押し抽選に参加しました。結果は以下を確認してください。\\n");
         lineMessagingAPI.addMessage("https://www.cm9.eprs.jp/shinagawa/web/");
         lineMessagingAPI.sendAll();
         log.info("LINEに通知を送信");

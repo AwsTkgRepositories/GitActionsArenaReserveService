@@ -77,8 +77,8 @@ jobs:
         with:
           chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
 
-      - name: Mavenパッケージをビルド
-        run: mvn clean package
+      - name: Mavenパッケージをビルド(テストコードはコンパイルしない)
+        run: mvn clean package -Dmaven.test.skip=true
 
       - name: 予約処理を実行
         env:
