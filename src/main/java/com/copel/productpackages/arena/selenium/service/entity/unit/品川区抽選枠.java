@@ -7,6 +7,21 @@ public enum 品川区抽選枠 {
     夜間;
 
     /**
+     * Enumインスタンスを文字列から生成する.
+     *
+     * @param name Enum名
+     * @return Enumインスタンス
+     */
+    public static 品川区抽選枠 getEnumByName(final String name) {
+        for (品川区抽選枠 value : values()) {
+            if (value.name().equals(name)) {
+                return value;
+            }
+        }
+        return 品川区抽選枠.午前;
+    }
+
+    /**
      * 2ヵ月後同日の枠のボタンのXpathを作成する.
      *
      * @return Xpath

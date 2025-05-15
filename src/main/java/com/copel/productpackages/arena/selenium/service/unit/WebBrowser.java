@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 画面項目を扱うクラス.
@@ -22,6 +23,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  * @author 鈴木一矢
  *
  */
+@Slf4j
 public class WebBrowser {
     /**
      * WebDriverクライアント.

@@ -1,4 +1,4 @@
-name: 品川区早押し抽選予約 (GitActionsArenaReserveService)
+name: 【品川区】早押し抽選予約 (GitActionsArenaReserveService)
 
 on:
   workflow_dispatch:
@@ -6,18 +6,21 @@ on:
       arenaName:
         description: '体育館を選択してください'
         required: true
-        default: 'スクエア荏原・全面'
+        default: 'スクエア荏原'
         type: choice
         options:
-          - スクエア荏原・全面
-          - スクエア荏原・半面1
-          - スクエア荏原・半面2
-          - 戸越体育館・全面
-          - 戸越体育館・半面1
-          - 戸越体育館・半面2
-          - 品川総合体育館・全面
-          - 品川総合体育館・半面1
-          - 品川総合体育館・半面2
+          - スクエア荏原
+          - 戸越体育館
+          - 品川総合体育館
+      courtName:
+        description: 'コートを選択してください'
+        required: true
+        default: '全面'
+        type: choice
+        options:
+          - 全面
+          - 半面1
+          - 半面2
       timeSlot:
         description: '時間枠を選択してください'
         required: true
@@ -32,8 +35,67 @@ on:
 jobs:
   ArenaResereQuickLotteryServiceShinagawa:
     runs-on: ubuntu-latest
+    env:
+      LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE Notifyのアクセストークン
+      NOTIFY_LINE_ID: ${{ secrets.NOTIFY_LINE_ID }} # LINE Notifyの通知先ID
+      ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} # 品川区の団体登録ID
+      ACCOUNT_PASSWORD: ${{ secrets.ACCOUNT_PASSWORD }} # 品川区の団体登録パスワード
     steps:
+      - name: 開始時間を記録
+        id: start
+        run: |
+          echo "##[group]ジョブ開始時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
+          echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
       - name: 入力値の確認
         run: |
           echo "体育館名： ${{ github.event.inputs.arenaName }}"
           echo "時間枠： ${{ github.event.inputs.timeSlot }}"
+
+      - name: コードをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Java17をセットアップ
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Chromeをインストール
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Chromeのバージョンを取得
+        id: get_chrome_version
+        run: |
+          version=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          echo "chrome_version=$version" >> $GITHUB_OUTPUT
+
+      - name: ChromeDriverをセットアップ
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
+
+      - name: Mavenパッケージをビルド
+        run: mvn clean package
+
+      - name: 予約処理を実行
+        env:
+          TARGET_ARENA_NAME: ${{ github.event.inputs.arenaName }}
+          TARGET_COURT_NAME: ${{ github.event.inputs.courtName }}
+          TARGET_TIME_SLOT: ${{ github.event.inputs.timeSlot }}
+        run: |
+          echo "TARGET_ARENA_NAME = $TARGET_ARENA_NAME"
+          echo "TARGET_TIME_SLOT = $TARGET_TIME_SLOT"
+          echo "TARGET_COURT_NAME = $TARGET_COURT_NAME"
+          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaResereQuickLotteryServiceShinagawa" -Dexec.classpathScope=runtime
+
+      - name: 終了時間を記録
+        run: |
+          echo "##[group]ジョブ終了時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "実行時間は ${DURATION} 秒でした。"
+        env:
+          START_TIME: ${{ env.START_TIME }}

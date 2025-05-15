@@ -1,4 +1,4 @@
-name: 品川区予約可能一覧取得 (GitActionsArenaReserveService)
+name: 【品川区】予約可能一覧取得 (GitActionsArenaReserveService)
 
 on:
   workflow_dispatch:

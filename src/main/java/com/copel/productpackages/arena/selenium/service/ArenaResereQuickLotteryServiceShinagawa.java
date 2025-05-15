@@ -2,6 +2,8 @@ package com.copel.productpackages.arena.selenium.service;
 
 import java.io.IOException;
 
+import org.openqa.selenium.NoSuchElementException;
+
 import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate;
 import com.copel.productpackages.arena.selenium.service.entity.unit.品川区抽選枠;
 import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
@@ -27,6 +29,31 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      * 通知の宛先LINE ID.
      */
     private static String NOTIFY_LINE_ID = System.getenv("NOTIFY_LINE_ID");
+    /**
+     * 環境変数.
+     * 品川区の団体登録ID.
+     */
+    private static String ACCOUNT_ID = System.getenv("ACCOUNT_ID");
+    /**
+     * 環境変数.
+     * 品川区の団体登録パスワード.
+     */
+    private static String ACCOUNT_PASSWORD = System.getenv("ACCOUNT_PASSWORD");
+    /**
+     * 環境変数.
+     * GitHUB Actionsに入力された対象体育館名.
+     */
+    private static String TARGET_ARENA_NAME = System.getenv("TARGET_ARENA_NAME");
+    /**
+     * 環境変数.
+     * GitHUB Actionsに入力された対象コート名.
+     */
+    private static String TARGET_COURT_NAME = System.getenv("TARGET_COURT_NAME");
+    /**
+     * 環境変数.
+     * GitHUB Actionsに入力された対象時間枠名.
+     */
+    private static String TARGET_TIME_SLOT = System.getenv("TARGET_TIME_SLOT");
 
     /**
      * メイン文.
@@ -37,10 +64,17 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      */
     public static void main(String[] args) throws InterruptedException, IOException {
         ArenaResereQuickLotteryServiceShinagawa service
-            = new ArenaResereQuickLotteryServiceShinagawa(LINE_CHANNEL_ACCESS_TOKEN, NOTIFY_LINE_ID, 品川区抽選枠.夜間);
+            = new ArenaResereQuickLotteryServiceShinagawa(
+                    LINE_CHANNEL_ACCESS_TOKEN, 
+                    NOTIFY_LINE_ID,
+                    ACCOUNT_ID,
+                    ACCOUNT_PASSWORD,
+                    TARGET_ARENA_NAME,
+                    TARGET_COURT_NAME,
+                    品川区抽選枠.getEnumByName(TARGET_TIME_SLOT));
         service.execute();
     }
-        
+
     /**
      * WebBrowserクライアント.
      */
@@ -54,6 +88,22 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      */
     private String channelAccessToken;
     /**
+     * 品川区の団体登録ID.
+     */
+    private String accountId;
+    /**
+     * 品川区の団体登録パスワード.
+     */
+    private String accountPassword;
+    /**
+     * 予約対象の体育館名.
+     */
+    private String targetArenaName;
+    /**
+     * 予約対象のコート名.
+     */
+    private String targetCourtName;
+    /**
      * 予約対象の枠.
      */
     private 品川区抽選枠 予約対象;
@@ -61,10 +111,14 @@ public class ArenaResereQuickLotteryServiceShinagawa {
     /**
      * コンストラクタ.
      */
-    public ArenaResereQuickLotteryServiceShinagawa(final String channelAccessToken, final String toLineId, final 品川区抽選枠 予約対象) {
+    public ArenaResereQuickLotteryServiceShinagawa(final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final String targetArenaName, final String targetCourtName, final 品川区抽選枠 予約対象) {
         this.webBrowser = new WebBrowser(false);
         this.toLineId = toLineId;
         this.channelAccessToken = channelAccessToken;
+        this.accountId = accountId;
+        this.accountPassword = accountPassword;
+        this.targetArenaName = targetArenaName;
+        this.targetCourtName = targetCourtName;
         this.予約対象 = 予約対象;
     }
 
@@ -93,7 +147,7 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             log.info("「開始日」を入力");
 
             // 検索条件「どこで」を選択
-            this.webBrowser.selectOptionByXpath("//*[@id=\"bname\"]", "スクエア荏原");
+            this.webBrowser.selectOptionByXpath("//*[@id=\"bname\"]", this.targetArenaName);
             log.info("検索条件「どこで」を選択");
 
             // 検索条件「何をする」を選択
@@ -118,20 +172,37 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             log.info("「ログイン」ボタンを押下");
 
             // 利用者番号入力
-            this.webBrowser.sendKeysByXpath("//*[@id=\"userId\"]", "00004348");
+            this.webBrowser.sendKeysByXpath("//*[@id=\"userId\"]", this.accountId);
             log.info("「利用者番号」を入力");
 
             // パスワード入力
-            this.webBrowser.sendKeysByXpath("//*[@id=\"password\"]", "Teamreserve0721");
+            this.webBrowser.sendKeysByXpath("//*[@id=\"password\"]", this.accountPassword);
             log.info("「パスワード」を入力");
 
             // ログインボタン押下
             this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
             log.info("「ログイン」ボタンを押下");
 
+            // 「館」を選択
+            this.webBrowser.selectOptionByXpath("//*[@id=\"mansion-select\"]", this.targetArenaName);
+            log.info("「館」を選択");
+
+            // 「施設」を選択
+            this.webBrowser.selectOptionByXpath("//*[@id=\"facility-select\"]", "アリーナ" + this.targetCourtName);
+            log.info("「施設」を選択");
+
             // 予約枠選択
-            this.webBrowser.clickByXpath(this.予約対象.getButtonXpathAfterTwoMonth());
-            log.info("枠を選択");
+            try {
+                this.webBrowser.clickByXpath(this.予約対象.getButtonXpathAfterTwoMonth());
+                log.info("枠を選択");
+            } catch (NoSuchElementException e) {
+                log.error(dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "は空いていないため、早押し抽選での予約ができませんでした。");
+                // エラーをLINEに通知
+                LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
+                lineMessagingAPI.addMessage(dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "は空いていないため、早押し抽選での予約ができませんでした。");
+                lineMessagingAPI.sendSeparate();
+                return;
+            }
 
             // 予約ボタン押下
             this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
