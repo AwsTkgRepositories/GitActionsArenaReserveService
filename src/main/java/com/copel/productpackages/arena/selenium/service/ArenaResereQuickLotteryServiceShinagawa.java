@@ -112,7 +112,17 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      * コンストラクタ.
      */
     public ArenaResereQuickLotteryServiceShinagawa(final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final String targetArenaName, final String targetCourtName, final 品川区抽選枠 予約対象) {
-        this.webBrowser = new WebBrowser(false);
+        this.webBrowser = new WebBrowser(true);
+        this.toLineId = toLineId;
+        this.channelAccessToken = channelAccessToken;
+        this.accountId = accountId;
+        this.accountPassword = accountPassword;
+        this.targetArenaName = targetArenaName;
+        this.targetCourtName = targetCourtName;
+        this.予約対象 = 予約対象;
+    }
+    public ArenaResereQuickLotteryServiceShinagawa(final boolean isHeadlessMode, final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final String targetArenaName, final String targetCourtName, final 品川区抽選枠 予約対象) {
+        this.webBrowser = new WebBrowser(isHeadlessMode);
         this.toLineId = toLineId;
         this.channelAccessToken = channelAccessToken;
         this.accountId = accountId;
