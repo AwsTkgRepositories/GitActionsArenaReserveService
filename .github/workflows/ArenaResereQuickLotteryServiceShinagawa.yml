@@ -4,23 +4,36 @@ on:
   workflow_dispatch:
     inputs:
       userName:
-        description: '操作者名を入力してください'
+        description: '体育館を選択してください'
         required: true
-        default: 'defaultUser'
-      runMode:
-        description: '実行モードを選択してください'
-        required: true
-        default: 'test'
+        default: 'スクエア荏原・全面'
         type: choice
         options:
-          - test
-          - production
+          - スクエア荏原・全面
+          - スクエア荏原・半面1
+          - スクエア荏原・半面2
+          - 戸越体育館・全面
+          - 戸越体育館・半面1
+          - 戸越体育館・半面2
+          - 品川総合体育館・全面
+          - 品川総合体育館・半面1
+          - 品川総合体育館・半面2
+      runMode:
+        description: '時間枠を選択してください'
+        required: true
+        default: '午前'
+        type: choice
+        options:
+          - 午前
+          - 午後1
+          - 午後2
+          - 夜間
 
 jobs:
-  example:
+  ArenaResereQuickLotteryServiceShinagawa:
     runs-on: ubuntu-latest
     steps:
-      - name: Show input values
+      - name: 入力値の確認
         run: |
           echo "UserName is ${{ github.event.inputs.userName }}"
           echo "Run mode is ${{ github.event.inputs.runMode }}"
