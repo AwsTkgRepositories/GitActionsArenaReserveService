@@ -2,8 +2,6 @@ package com.copel.productpackages.arena.selenium.service;
 
 import java.io.IOException;
 
-import org.openqa.selenium.NoSuchElementException;
-
 import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate;
 import com.copel.productpackages.arena.selenium.service.entity.unit.品川区抽選枠;
 import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
@@ -202,11 +200,9 @@ public class ArenaResereQuickLotteryServiceShinagawa {
             this.webBrowser.selectOptionByXpath("//*[@id=\"facility-select\"]", "アリーナ" + this.targetCourtName); // スクエア荏原はアリーナXX、戸越と総合は主競技場XX
             log.info("「施設」でアリーナ" + this.targetCourtName + "を選択");
 
-            // 予約枠選択
-            try {
-                this.webBrowser.clickByXpath(this.予約対象.getButtonXpathAfterTwoMonth());
-                log.info("枠「" + this.予約対象.getButtonXpathAfterTwoMonth() + "」を選択");
-            } catch (NoSuchElementException e) {
+            // 予約しようとしている対象の枠が空きではなかった場合、処理終了
+            String status = this.webBrowser.getAltAttributeByXpath(this.予約対象.getButtonXpathAfterTwoMonth());
+            if (!"空き".equals(status)) {
                 log.error(dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象.name() + "は空いていないため、早押し抽選での予約ができませんでした。");
                 // エラーをLINEに通知
                 LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
@@ -214,6 +210,14 @@ public class ArenaResereQuickLotteryServiceShinagawa {
                 lineMessagingAPI.sendSeparate();
                 return;
             }
+
+            // 予約枠選択
+            this.webBrowser.clickByXpath(this.予約対象.getButtonXpathAfterTwoMonth());
+            log.info("枠「" + this.予約対象.getButtonXpathAfterTwoMonth() + "」を選択");
+
+            // 予約枠選択時の描画の変化を待機する
+            this.webBrowser.waitForInputValueChange(this.予約対象.getInputXpathAfterTwoMonth(), "1");
+            log.info("枠「" + this.予約対象.getInputXpathAfterTwoMonth() + "」が選択後の値に変化しました");
 
             // 予約ボタン押下
             this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");

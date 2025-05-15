@@ -168,12 +168,10 @@ public class WebBrowser {
      * @throws InterruptedException
      */
     public void sendKeysByXpath(final String xpath, final String text) throws InterruptedException {
-        this.wait(1);
         WebElement element = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
         element = this.driver.findElement(By.xpath(xpath));
-        for (char c : text.toCharArray()) {
-            element.sendKeys(Character.toString(c));
-        }
+        element.clear();
+        element.sendKeys(text);
     }
 
     /**
@@ -184,12 +182,9 @@ public class WebBrowser {
      * @throws InterruptedException
      */
     public void sendKeysByName(final String name, final String text) throws InterruptedException {
-        this.wait(1);
         WebElement element = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.name(name)));
         element = this.driver.findElement(By.name(name));
-        for (char c : text.toCharArray()) {
-            element.sendKeys(Character.toString(c));
-        }
+        element.sendKeys(text);
     }
 
     /**
@@ -198,7 +193,7 @@ public class WebBrowser {
      * @param xpath XPath
      */
     public void clickByXpath(final String xpath) {
-        WebElement element = this.driver.findElement(By.xpath(xpath));
+        WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
         element.click();
     }
 
@@ -230,7 +225,7 @@ public class WebBrowser {
      * @param visibleText 選択するオプションの表示テキスト
      */
     public void selectOptionByXpath(final String xpath, final String visibleText) {
-        WebElement dropdownElement = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+        WebElement dropdownElement = this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
         Select dropdown = new Select(dropdownElement);
         dropdown.selectByVisibleText(visibleText);
     }
@@ -259,6 +254,9 @@ public class WebBrowser {
     public void wait(final int second) throws InterruptedException {
         Thread.sleep(second * 1000);
     }
+    public void wait(final double second) throws InterruptedException {
+        Thread.sleep((long) second * 1000);
+    }
 
     /**
      * 引数のURL先に遷移が完了するまで待機する.
@@ -267,6 +265,25 @@ public class WebBrowser {
      */
     public void waitByUrl(final String url) {
         this.wait.until(ExpectedConditions.urlContains(url));
+    }
+
+    /**
+     * 引数のXpathで指定した要素が読み込まれるまで待機する.
+     *
+     * @param xpath Xpath
+     */
+    public void waitUntilLoadByXpath(final String xpath) {
+        this.wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+    }
+
+    /**
+     * Xpathに指定したInput要素のvalue属性が指定の値になるまで待機する.
+     *
+     * @param xpath Xpath
+     * @param expectedValue value属性の期待値
+     */
+    public void waitForInputValueChange(final String xpath, final String expectedValue) {
+        this.wait.until(ExpectedConditions.attributeToBe(By.xpath(xpath), "value", expectedValue));
     }
 
     /**

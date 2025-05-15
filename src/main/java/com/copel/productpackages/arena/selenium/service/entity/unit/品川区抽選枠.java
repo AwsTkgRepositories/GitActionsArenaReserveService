@@ -42,4 +42,26 @@ public enum 品川区抽選枠 {
                 return "";
         }
     }
+
+    /**
+     * 2ヵ月後同日の枠のInoutのXpathを作成する.
+     *
+     * @return Xpath
+     */
+    public String getInputXpathAfterTwoMonth() {
+        OriginalDate dateAfterTwoMonth = new OriginalDate();
+        dateAfterTwoMonth.plusMonths(2);
+        switch (this) {
+            case 午前:
+                return "//*[@id=\"S_" + dateAfterTwoMonth.toYYYYMMDD() + "_10\"]";
+            case 午後1:
+                return "//*[@id=\"S_" + dateAfterTwoMonth.toYYYYMMDD() + "_20\"]";
+            case 午後2:
+                return "//*[@id=\"S_" + dateAfterTwoMonth.toYYYYMMDD() + "_30\"]";
+            case 夜間:
+                return "//*[@id=\"S_" + dateAfterTwoMonth.toYYYYMMDD() + "_40\"]";
+            default:
+                return "";
+        }
+    }
 }
