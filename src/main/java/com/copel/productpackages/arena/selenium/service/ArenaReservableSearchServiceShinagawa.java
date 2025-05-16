@@ -200,11 +200,15 @@ public class ArenaReservableSearchServiceShinagawa {
             }
 
             // 検索結果をLINEに送信
-            LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-            lineMessagingAPI.addMessage("【品川区】\\n【" + this.targetArena.name() + "】\\n\\n");
-            lineMessagingAPI.addMessage(resultLot.toString());
-            lineMessagingAPI.sendAll();
-            log.info("LINEに通知を送信");
+            if (resultLot.isTargetExists()) {
+                LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
+                lineMessagingAPI.addMessage("【品川区】\\n【" + this.targetArena.name() + "】\\n\\n");
+                lineMessagingAPI.addMessage(resultLot.toString());
+                lineMessagingAPI.sendAll();
+                log.info("LINEに通知を送信しました");
+            } else {
+                log.info("通知対象の枠が存在しないため、LINE通知を行いませんでした");
+            }
         } catch (Exception e) {
             // ドライバを閉じる
             this.webBrowser.quit();
