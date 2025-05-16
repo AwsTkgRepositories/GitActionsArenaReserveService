@@ -3,7 +3,7 @@ name: 【品川区】予約可能一覧取得 (GitActionsArenaReserveService)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *' # 毎日0時30分（UTC）＝日本時間9時30分に実行
+    - cron: '30 6 * * *' # 毎日0時30分（UTC）＝日本時間9時30分に実行
 
 jobs:
   ArenaReservableSearchServiceShinagawa:
