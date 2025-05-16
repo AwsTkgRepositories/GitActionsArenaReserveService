@@ -3,7 +3,7 @@ name: 【品川区】早押し抽選予約・自動 (GitActionsArenaReserveServi
 on:
   workflow_dispatch:
   schedule:
-    - cron: '50 1 * * *' # 毎日1時55分（UTC）＝日本時間9時55分に実行
+    - cron: '52 1 * * *' # 毎日1時55分（UTC）＝日本時間9時55分に実行
 
 jobs:
   ArenaResereQuickLotteryServiceShinagawaAuto:

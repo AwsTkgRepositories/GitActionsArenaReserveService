@@ -3,7 +3,7 @@ name: 【品川区】毎月の抽選申し込み (GitActionsArenaReserveService)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 2 20 * *' # 毎月20日11時（JST）
+    - cron: '45 2 20 * *' # 毎月20日11時45分（JST）
 
 jobs:
   ArenaResereMonthlyLotteryServiceShinagawa:
