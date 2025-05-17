@@ -11,14 +11,14 @@ RUN apt-get update && \
 
 # ChromeDriverを合わせる
 RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+') && \
-    wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROME_VERSION}/chromedriver_linux64.zip && \
+    CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}) && \
+    wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip && \
     unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
     chmod +x /usr/local/bin/chromedriver
 
-# Mavenビルド用
+# Mavenプロジェクトをビルド
 COPY . /app
 WORKDIR /app
-
 RUN mvn clean package -Dmaven.test.skip=true
 
 # 実行コマンド（ArenaReservableSearchServiceShinagawaを動かす）
