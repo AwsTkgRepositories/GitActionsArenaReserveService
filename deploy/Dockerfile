@@ -17,7 +17,11 @@ RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+') && \
     CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}) || true && \
     if [ -z "$CHROMEDRIVER_VERSION" ]; then \
         echo "No version found for LATEST_RELEASE_${CHROME_VERSION%.*}, fallback to LATEST_RELEASE_${CHROME_MAJOR_VERSION}"; \
-        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION}); \
+        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION}) || true; \
+    fi && \
+    if [ -z "$CHROMEDRIVER_VERSION" ]; then \
+        echo "No version found for LATEST_RELEASE_${CHROME_MAJOR_VERSION}, fallback to LATEST_RELEASE"; \
+        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE) || true; \
     fi && \
     if [ -z "$CHROMEDRIVER_VERSION" ]; then \
         echo "Failed to get chromedriver version for Chrome $CHROME_VERSION"; \
