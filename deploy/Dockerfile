@@ -11,7 +11,19 @@ RUN apt-get update && \
 
 # ChromeDriverを合わせる
 RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+') && \
-    CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}) && \
+    echo "Chrome version: $CHROME_VERSION" && \
+    CHROME_MAJOR_VERSION=${CHROME_VERSION%%.*} && \
+    echo "Chrome major version: $CHROME_MAJOR_VERSION" && \
+    CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}) || true && \
+    if [ -z "$CHROMEDRIVER_VERSION" ]; then \
+        echo "No version found for LATEST_RELEASE_${CHROME_VERSION%.*}, fallback to LATEST_RELEASE_${CHROME_MAJOR_VERSION}"; \
+        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION}); \
+    fi && \
+    if [ -z "$CHROMEDRIVER_VERSION" ]; then \
+        echo "Failed to get chromedriver version for Chrome $CHROME_VERSION"; \
+        exit 1; \
+    fi && \
+    echo "Using Chromedriver version: $CHROMEDRIVER_VERSION" && \
     wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip && \
     unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
     chmod +x /usr/local/bin/chromedriver
