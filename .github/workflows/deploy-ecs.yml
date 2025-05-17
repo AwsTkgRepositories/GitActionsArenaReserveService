@@ -1,5 +1,4 @@
-name: Deploy to ECS
-
+name: ECSへのデプロイ（arena-reserve-service）
 on:
   push:
     branches:
