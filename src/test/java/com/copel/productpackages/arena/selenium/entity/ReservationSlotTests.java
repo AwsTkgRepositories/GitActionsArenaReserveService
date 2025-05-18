@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import com.copel.productpackages.arena.selenium.service.entity.CourtUsageType;
 import com.copel.productpackages.arena.selenium.service.entity.ReservationSlot;
+import com.copel.productpackages.arena.selenium.service.entity.ReserveStatus;
 import com.copel.productpackages.arena.selenium.service.entity.TimeSlot;
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate;
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDateTime;
-import com.copel.productpackages.arena.selenium.service.entity.unit.ReserveStatus;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 
 class ReservationSlotTests {
 

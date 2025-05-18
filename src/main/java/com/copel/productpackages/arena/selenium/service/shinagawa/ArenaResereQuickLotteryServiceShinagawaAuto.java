@@ -1,4 +1,4 @@
-package com.copel.productpackages.arena.selenium.service;
+package com.copel.productpackages.arena.selenium.service.shinagawa;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -7,10 +7,8 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate;
-import com.copel.productpackages.arena.selenium.service.entity.unit.品川区体育館;
-import com.copel.productpackages.arena.selenium.service.entity.unit.品川区抽選枠;
 import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
 
 import lombok.extern.slf4j.Slf4j;

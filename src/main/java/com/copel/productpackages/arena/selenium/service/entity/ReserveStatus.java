@@ -1,4 +1,4 @@
-package com.copel.productpackages.arena.selenium.service.entity.unit;
+package com.copel.productpackages.arena.selenium.service.entity;
 
 public enum ReserveStatus {
     予約可能,

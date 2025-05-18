@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDateTime;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 
 public class OriginalDateTimeTests {
 

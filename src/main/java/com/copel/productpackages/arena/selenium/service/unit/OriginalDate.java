@@ -1,4 +1,4 @@
-package com.copel.productpackages.arena.selenium.service.entity.unit;
+package com.copel.productpackages.arena.selenium.service.unit;
 
 import java.io.IOException;
 import java.net.URI;

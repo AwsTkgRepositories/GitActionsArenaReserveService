@@ -47,17 +47,17 @@ jobs:
       - name: スクエア荏原の空き状況を取得
         env:
           TARGET_ARENA_NAME: スクエア荏原
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.shinagawa.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
 
       - name: 戸越体育館の空き状況を取得
         env:
           TARGET_ARENA_NAME: 戸越体育館
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.shinagawa.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
 
       - name: 品川総合体育館の空き状況を取得
         env:
           TARGET_ARENA_NAME: 総合体育館
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.shinagawa.ArenaReservableSearchServiceShinagawa" -Dexec.classpathScope=runtime
 
       - name: 終了時間を記録
         run: |

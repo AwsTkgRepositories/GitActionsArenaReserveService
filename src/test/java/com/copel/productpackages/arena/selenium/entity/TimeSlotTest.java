@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.copel.productpackages.arena.selenium.service.entity.TimeSlot;
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDateTime;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 
 
 public class TimeSlotTest {

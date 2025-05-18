@@ -1,8 +1,7 @@
-package com.copel.productpackages.arena.selenium.service;
+package com.copel.productpackages.arena.selenium.service.shinagawa;
 
 import java.io.IOException;
 
-import com.copel.productpackages.arena.selenium.service.entity.unit.品川区体育館;
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
 
 import lombok.extern.slf4j.Slf4j;

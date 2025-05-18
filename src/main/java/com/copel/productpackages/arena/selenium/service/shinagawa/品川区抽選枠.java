@@ -1,4 +1,6 @@
-package com.copel.productpackages.arena.selenium.service.entity.unit;
+package com.copel.productpackages.arena.selenium.service.shinagawa;
+
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 
 public enum 品川区抽選枠 {
     午前,

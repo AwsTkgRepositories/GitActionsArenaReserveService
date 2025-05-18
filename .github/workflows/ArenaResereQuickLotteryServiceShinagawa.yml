@@ -89,7 +89,7 @@ jobs:
           echo "TARGET_ARENA_NAME = $TARGET_ARENA_NAME"
           echo "TARGET_TIME_SLOT = $TARGET_TIME_SLOT"
           echo "TARGET_COURT_NAME = $TARGET_COURT_NAME"
-          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaResereQuickLotteryServiceShinagawa" -Dexec.classpathScope=runtime
+          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.shinagawa.ArenaResereQuickLotteryServiceShinagawa" -Dexec.classpathScope=runtime
 
       - name: 終了時間を記録
         run: |

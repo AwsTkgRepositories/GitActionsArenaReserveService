@@ -1,7 +1,6 @@
 package com.copel.productpackages.arena.selenium.service.entity;
 
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate;
-import com.copel.productpackages.arena.selenium.service.entity.unit.ReserveStatus;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 
 /**
  * 予約枠クラス.

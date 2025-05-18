@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import com.copel.productpackages.arena.selenium.service.ArenaResereQuickLotteryServiceShinagawa;
-import com.copel.productpackages.arena.selenium.service.entity.unit.品川区体育館;
-import com.copel.productpackages.arena.selenium.service.entity.unit.品川区抽選枠;
+import com.copel.productpackages.arena.selenium.service.shinagawa.ArenaResereQuickLotteryServiceShinagawa;
+import com.copel.productpackages.arena.selenium.service.shinagawa.品川区体育館;
+import com.copel.productpackages.arena.selenium.service.shinagawa.品川区抽選枠;
 
 public class ArenaResereQuickLotteryServiceShinagawaTests {
 

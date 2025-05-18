@@ -1,6 +1,6 @@
 package com.copel.productpackages.arena.selenium.service.entity;
 
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDateTime;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 
 /**
  * 時間帯クラス.

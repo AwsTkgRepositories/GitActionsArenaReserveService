@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDate;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 
 class OriginalDateTests {
 

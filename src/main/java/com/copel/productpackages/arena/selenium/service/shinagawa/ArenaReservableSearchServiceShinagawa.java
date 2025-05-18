@@ -1,4 +1,4 @@
-package com.copel.productpackages.arena.selenium.service;
+package com.copel.productpackages.arena.selenium.service.shinagawa;
 
 import java.io.IOException;
 
@@ -7,11 +7,10 @@ import org.openqa.selenium.TimeoutException;
 import com.copel.productpackages.arena.selenium.service.entity.CourtUsageType;
 import com.copel.productpackages.arena.selenium.service.entity.ReservationSlot;
 import com.copel.productpackages.arena.selenium.service.entity.ReservationSlotLot;
+import com.copel.productpackages.arena.selenium.service.entity.ReserveStatus;
 import com.copel.productpackages.arena.selenium.service.entity.TimeSlot;
-import com.copel.productpackages.arena.selenium.service.entity.unit.OriginalDateTime;
-import com.copel.productpackages.arena.selenium.service.entity.unit.ReserveStatus;
-import com.copel.productpackages.arena.selenium.service.entity.unit.品川区体育館;
 import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
 
 import lombok.extern.slf4j.Slf4j;

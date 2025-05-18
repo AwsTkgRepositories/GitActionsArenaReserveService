@@ -1,4 +1,4 @@
-package com.copel.productpackages.arena.selenium.service.entity.unit;
+package com.copel.productpackages.arena.selenium.service.shinagawa;
 
 public enum 品川区体育館 {
     総合体育館,
