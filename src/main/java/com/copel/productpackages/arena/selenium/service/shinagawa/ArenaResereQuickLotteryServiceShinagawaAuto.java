@@ -295,7 +295,7 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
 
         // 抽選結果結果をLINEに送信
         LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-        lineMessagingAPI.addMessage("【品川区】\\n【自動早押し抽選結果】\\n\\n" + dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象枠.name() + "\\n" + this.targetArena.getDisplayWithCourtName(this.targetCourtName) + "\\nの早押し抽選に自動で参加しました。結果は以下を確認してください。\\n");
+        lineMessagingAPI.addMessage("【品川区】\\n【自動早押し抽選結果】\\n\\n" + this.targetArena.name() + "\\n" + dateAfterTwoMonth.toDisplayStringWithoutYear() + this.予約対象枠.name() + "\\n" + this.targetArena.getDisplayWithCourtName(this.targetCourtName) + "\\nの早押し抽選にオートモードで参加しました。結果は以下を確認してください。\\n");
         lineMessagingAPI.addMessage("https://www.cm9.eprs.jp/shinagawa/web/");
         lineMessagingAPI.sendAll();
         log.info("LINEに通知を送信しました");
