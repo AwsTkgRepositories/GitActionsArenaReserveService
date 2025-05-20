@@ -48,19 +48,19 @@ jobs:
         env:
           TARGET_ARENA_NAME: 大森スポーツセンター
           TARGET_COURT_NAME: 主競技場
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
 
       - name: 田園調布せせらぎ館・体育室Aの空き状況を取得
         env:
           TARGET_ARENA_NAME: 田園調布せせらぎ館
           TARGET_COURT_NAME: 体育室A
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
 
       - name: 田園調布せせらぎ館・体育室Bの空き状況を取得
         env:
           TARGET_ARENA_NAME: 田園調布せせらぎ館
           TARGET_COURT_NAME: 体育室B
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
 
       - name: 終了時間を記録
         run: |
