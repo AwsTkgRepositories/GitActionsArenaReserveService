@@ -113,6 +113,22 @@ public class OriginalDateTime implements Comparable<OriginalDateTime> {
         }
     }
 
+    /**
+     * OriginalDateと時刻情報でこのオブジェクトを初期化する
+     * @param date OriginalDateインスタンス
+     * @param hour 時
+     * @param minutes 分
+     * @param second 秒
+     */
+    public OriginalDateTime(final OriginalDate date, int hour, int minutes, int second) {
+        if (date == null) {
+            this.dateTime = null;
+        } else {
+            LocalDate localDate = date.getDate();
+            this.dateTime = LocalDateTime.of(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth(), hour, minutes, second);
+        }
+    }
+
     // ================================
     // メソッド定義
     // ================================

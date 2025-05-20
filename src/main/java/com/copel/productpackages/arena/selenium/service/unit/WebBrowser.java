@@ -189,6 +189,16 @@ public class WebBrowser {
     }
 
     /**
+     * 指定したXPathの要素が見える位置までスクロールする.
+     *
+     * @param xpath スクロール先の要素のXPath
+     */
+    public void scrollToElementByXpath(final String xpath) {
+        WebElement element = this.wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+        ((JavascriptExecutor) this.driver).executeScript("arguments[0].scrollIntoView({ behavior: 'smooth', block: 'center' });", element);
+    }
+
+    /**
      * 画面項目をクリックする(Xpathで探索).
      *
      * @param xpath XPath
@@ -196,6 +206,16 @@ public class WebBrowser {
     public void clickByXpath(final String xpath) {
         WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
         element.click();
+    }
+
+    /**
+     * 画面項目をJavaScriptでクリックする.
+     *
+     * @param xpath Xpath
+     */
+    public void clickByXpathWithJS(final String xpath) {
+        WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+        ((JavascriptExecutor) this.driver).executeScript("arguments[0].click();", element);
     }
 
     /**
@@ -294,6 +314,31 @@ public class WebBrowser {
      */
     public void waitForInputValueChange(final String xpath, final String expectedValue) {
         this.wait.until(ExpectedConditions.attributeToBe(By.xpath(xpath), "value", expectedValue));
+    }
+
+    /**
+     * JavaScriptを実行する.
+     *
+     * @param script JavaScriptコード
+     */
+    public String executeScript(final String script) {
+        JavascriptExecutor js = (JavascriptExecutor) this.driver;
+        return (String) js.executeScript(script);
+    }
+    public String executeScript(final String script, final String var) {
+        JavascriptExecutor js = (JavascriptExecutor) this.driver;
+        return (String) js.executeScript(script, var);
+    }
+
+    /**
+     * 引数のXpathの要素が持つテキストを取得.
+     *
+     * @param xpath Xpath
+     * @return テキスト
+     */
+    public String getTextByXpath(final String xpath) {
+        WebElement element = this.wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+        return element.getText();
     }
 
     /**

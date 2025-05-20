@@ -1,5 +1,6 @@
 package com.copel.productpackages.arena.selenium.service.entity;
 
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 
 /**
@@ -32,6 +33,29 @@ public class TimeSlot {
         this.slotName = slotName;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    /**
+     * 
+     * @param slotName
+     * @return
+     */
+    public static TimeSlot getTimeSlotOtaByName(final String slotName, final OriginalDate date) {
+        TimeSlot slot = null;
+        switch (slotName) {
+            case "午前" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 9, 0, 0), new OriginalDateTime(date, 12, 0, 0));
+                break;
+            case "午後" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 13, 0, 0), new OriginalDateTime(date, 17, 00, 0));
+                break;
+            case "夜間" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 18, 0, 0), new OriginalDateTime(date, 22, 0, 0));
+                break;
+            default:
+                break;
+        }
+        return slot;
     }
 
     /**

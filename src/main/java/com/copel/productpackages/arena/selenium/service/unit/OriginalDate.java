@@ -5,14 +5,18 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class OriginalDate {
+public class OriginalDate implements Comparable<OriginalDate> {
     /**
      * 祝日取得APIエンドポイント.
      */
@@ -120,9 +124,35 @@ public class OriginalDate {
                 // 無視して次のパターンを試す
             }
         }
+
+        // 日本語形式 (例: "5月11日" や "11月1日") に対応
+        Pattern pattern = Pattern.compile("(\\d{1,2})月(\\d{1,2})日");
+        Matcher matcher = pattern.matcher(dateStr);
+
+        if (matcher.find()) {
+            int month = Integer.parseInt(matcher.group(1));
+            int day = Integer.parseInt(matcher.group(2));
+            int year = LocalDate.now().getYear();
+
+            try {
+                this.date = LocalDate.of(year, month, day);
+            } catch (DateTimeException e) {
+                // 無視
+            }
+        }
+
         if (this.date == null) {
             throw new IllegalArgumentException("対応していない日付形式です: " + dateStr);
         }
+    }
+
+    /**
+     * 1月1日であるかどうかを判定する.
+     *
+     * @return 1月1日であればtrue、それ以外はfalse
+     */
+    public boolean is1月1日() {
+        return this.date.getMonth() == Month.JANUARY && this.date.getDayOfMonth() == 1;
     }
 
     public boolean is土日() {
@@ -143,12 +173,42 @@ public class OriginalDate {
     }
 
     /**
+     * 引数で指定した年を足す
+     *
+     * @param year 年
+     */
+    public void plusYear(final int year) {
+        this.date = this.date.plusYears(year);
+    }
+
+    /**
      * 引数で指定した月を足す
      *
      * @param months 月
      */
     public void plusMonths(final int months) {
         this.date = this.date.plusMonths(months);
+    }
+
+    /**
+     * この日付が引数のdateよりも後の日付かどうかを判定します.
+     *
+     * @param date 比較対象日付
+     * @return この日付が引数のdateよりも後の日付であればtrue、そうでなければfalse（同一日付はfalse）
+     */
+    public boolean isAfter(final OriginalDate date) {
+        return this.compareTo(date) > 0;
+    }
+
+    /**
+     * このインスタンスの日付が、今日から指定した月数後の日付と同じかを判定する。
+     *
+     * @param months 加算する月数
+     * @return true: 同じ日付 / false: 異なる日付
+     */
+    public boolean isSameAsTodayPlusMonthsFromToday(int months) {
+        LocalDate todayPlusMonths = LocalDate.now().plusMonths(months);
+        return this.date.equals(todayPlusMonths);
     }
 
     /**
@@ -194,5 +254,27 @@ public class OriginalDate {
             case SUNDAY: return "日";
             default: return "";
         }
+    }
+
+    @Override
+    public int compareTo(OriginalDate o) {
+        if (o == null) {
+            throw new NullPointerException("比較対象が null です。");
+        }
+        return this.date.compareTo(o.getDate());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        OriginalDate other = (OriginalDate) obj;
+        return this.date.equals(other.getDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.date.hashCode();
     }
 }

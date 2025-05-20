@@ -20,6 +20,21 @@ public enum ReserveStatus {
         }
     }
 
+    public static ReserveStatus getEnumByOta(final String status) {
+        switch (status) {
+            case "施設を利用できません" :
+                return 予約不可;
+            case "休館日です" :
+                return 予約不可;
+            case "予約済みです" :
+                return 予約不可;
+            case "空いています" :
+                return 予約可能;
+            default :
+                return その他;
+        }
+    }
+
     public String getIcon() {
         if (予約可能.equals(this)) {
             return "○";
