@@ -280,7 +280,13 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
             this.webBrowser.waitForAlertAndAccept();
             log.info("アラートのOKを押下");
 
-            this.webBrowser.wait(3);
+            // さらにアラートが表示されたらOKを押下
+            if (this.webBrowser.isAlertPresent()) {
+                this.webBrowser.waitForAlertAndAccept();
+                log.info("アラート「OK」を押下");
+            }
+
+            this.webBrowser.wait(5);
             log.info("早押し抽選処理は正常に終了しました");
 
             // ドライバを閉じる

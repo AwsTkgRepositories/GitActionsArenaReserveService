@@ -276,6 +276,21 @@ public class WebBrowser {
     }
 
     /**
+     * アラートが現在表示されているかどうかを判定する.
+     *
+     * @return アラートが表示されていればtrue、そうでなければfalse
+     */
+    public boolean isAlertPresent() {
+        try {
+            WebDriverWait shortWait = new WebDriverWait(this.driver, Duration.ofSeconds(2));
+            shortWait.until(ExpectedConditions.alertIsPresent());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * 引数の秒数だけ処理を待機する.
      *
      * @param second 待機秒数
