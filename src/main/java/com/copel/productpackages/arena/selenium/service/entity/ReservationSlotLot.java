@@ -31,6 +31,21 @@ public class ReservationSlotLot implements Iterable<ReservationSlot> {
                 .anyMatch(slot -> slot.is予約可能() && (slot.is土日祝日() || slot.is平日夜間()));
     }
 
+    /**
+     * このLotから土日祝日のみのものを作成する.
+     *
+     * @return ReservationSlotLot
+     */
+    public ReservationSlotLot filter土日祝日Only() {
+        ReservationSlotLot result = new ReservationSlotLot();
+        for (ReservationSlot slot : this.slotLot) {
+            if (slot.is土日祝日()) {
+                result.add(slot);
+            }
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();

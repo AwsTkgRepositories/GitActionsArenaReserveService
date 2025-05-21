@@ -191,6 +191,12 @@ public class ArenaReservableSearchServiceOta {
             // ドライバを閉じる
             this.webBrowser.quit();
 
+            // 【通知文短縮化対応】
+            // 大森スポーツセンターは平日の予定が不要なため、土日祝の予定だけに絞る
+            if (大田区体育館.大森スポーツセンター.equals(this.targetArena)) {
+                slotLot = slotLot.filter土日祝日Only();
+            }
+
             // 検索結果をLINEに送信
             if (slotLot.isTargetExists()) {
                 LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
