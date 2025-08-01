@@ -12,7 +12,7 @@ public class ArenaReservableSearchServiceShinagawaTests {
     @Test
     void 品川区空き状況取得() throws InterruptedException, IOException {
         ArenaReservableSearchServiceShinagawa service
-            = new ArenaReservableSearchServiceShinagawa("", "", 品川区体育館.スクエア荏原);
+            = new ArenaReservableSearchServiceShinagawa("", null, 品川区体育館.スクエア荏原);
         service.execute();
     }
 }

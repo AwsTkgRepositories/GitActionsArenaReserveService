@@ -8,7 +8,7 @@ import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
  * @author 鈴木一矢
  *
  */
-public class ReservationSlot {
+public class ReservationSlot implements Comparable<ReservationSlot> {
     /**
      * 日付.
      */
@@ -65,6 +65,33 @@ public class ReservationSlot {
     @Override
     public String toString() {
         return this.slotDate.toDisplayStringWithoutYear() + "：" + this.timeSlot.toDisplayString() + this.usageType.name() + " " + this.reserveStatus.getIcon();
+    }
+
+    @Override
+    public int compareTo(ReservationSlot o) {
+        return this.slotDate.compareTo(o.getSlotDate());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ReservationSlot that = (ReservationSlot) o;
+
+        if (this.slotDate != null ? !this.slotDate.equals(that.getSlotDate()) : that.getSlotDate() != null) return false;
+        if (this.timeSlot != null ? !this.timeSlot.equals(that.getTimeSlot()) : that.getTimeSlot() != null) return false;
+        if (this.usageType != that.getUsageType()) return false;
+        return this.reserveStatus == that.getReserveStatus();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.slotDate != null ? this.slotDate.hashCode() : 0;
+        result = 31 * result + (this.timeSlot != null ? this.timeSlot.hashCode() : 0);
+        result = 31 * result + (this.usageType != null ? this.usageType.hashCode() : 0);
+        result = 31 * result + (this.reserveStatus != null ? this.reserveStatus.hashCode() : 0);
+        return result;
     }
 
     public OriginalDate getSlotDate() {

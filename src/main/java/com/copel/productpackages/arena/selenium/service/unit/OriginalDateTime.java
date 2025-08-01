@@ -6,6 +6,7 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * 【フレームワーク部品】
@@ -405,5 +406,22 @@ public class OriginalDateTime implements Comparable<OriginalDateTime> {
         } else {
             this.dateTime = LocalDateTime.now();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dateTime);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OriginalDateTime other = (OriginalDateTime) obj;
+        return Objects.equals(dateTime, other.dateTime);
     }
 }

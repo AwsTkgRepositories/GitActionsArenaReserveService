@@ -1,17 +1,17 @@
 package com.copel.productpackages.arena.selenium.service.entity;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 public class ReservationSlotLot implements Iterable<ReservationSlot> {
     /**
      * Lotオブジェクト.
      */
-    private List<ReservationSlot> slotLot;
+    private Set<ReservationSlot> slotLot;
 
     public ReservationSlotLot() {
-        this.slotLot = new ArrayList<ReservationSlot>();
+        this.slotLot = new HashSet<ReservationSlot>();
     }
 
     public Iterator<ReservationSlot> iterator() {

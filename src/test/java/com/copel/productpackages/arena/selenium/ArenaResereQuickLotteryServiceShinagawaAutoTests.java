@@ -12,7 +12,7 @@ public class ArenaResereQuickLotteryServiceShinagawaAutoTests {
     @Test
     void 品川区体育館自動早押し予約() throws InterruptedException, IOException {
         ArenaResereQuickLotteryServiceShinagawaAuto service
-            = new ArenaResereQuickLotteryServiceShinagawaAuto(false, "", "", "00004348", "Teamreserve0721", 品川区体育館.スクエア荏原, "全面");
+            = new ArenaResereQuickLotteryServiceShinagawaAuto(false, "", null, "00004348", "Teamreserve0721", 品川区体育館.スクエア荏原, "全面");
         service.execute();
     }
 }

@@ -1,5 +1,7 @@
 package com.copel.productpackages.arena.selenium.service.entity;
 
+import java.util.Objects;
+
 import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 
@@ -36,7 +38,8 @@ public class TimeSlot {
     }
 
     /**
-     * 
+     * 枠名から大田区のTimeSlotを取得する
+     *
      * @param slotName
      * @return
      */
@@ -51,6 +54,39 @@ public class TimeSlot {
                 break;
             case "夜間" :
                 slot = new TimeSlot(slotName, new OriginalDateTime(date, 18, 0, 0), new OriginalDateTime(date, 22, 0, 0));
+                break;
+            default:
+                break;
+        }
+        return slot;
+    }
+
+    /**
+     * 枠名から世田谷区のTimeSlotを取得する
+     *
+     * @param slotName
+     * @return
+     */
+    public static TimeSlot getTimeSlotSetagayaByName(final String slotName, final OriginalDate date) {
+        TimeSlot slot = null;
+        switch (slotName) {
+            case "午前" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 9, 0, 0), new OriginalDateTime(date, 11, 0, 0));
+                break;
+            case "午後" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 11, 30, 0), new OriginalDateTime(date, 16, 00, 0));
+                break;
+            case "午後1" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 11, 30, 0), new OriginalDateTime(date, 13, 30, 0));
+                break;
+            case "午後2" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 14, 0, 0), new OriginalDateTime(date, 16, 0, 0));
+                break;
+            case "午後3" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 16, 30, 0), new OriginalDateTime(date, 18, 30, 0));
+                break;
+            case "夜間" :
+                slot = new TimeSlot(slotName, new OriginalDateTime(date, 19, 0, 0), new OriginalDateTime(date, 22, 0, 0));
                 break;
             default:
                 break;
@@ -77,5 +113,23 @@ public class TimeSlot {
 
     public String toDisplayString() {
         return this.slotName + "(" + this.startTime.getHHmm() + "〜" + this.endTime.getHHmm() + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TimeSlot other = (TimeSlot) obj;
+        return Objects.equals(endTime, other.endTime) && Objects.equals(slotName, other.slotName)
+                && Objects.equals(startTime, other.startTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(endTime, slotName, startTime);
     }
 }

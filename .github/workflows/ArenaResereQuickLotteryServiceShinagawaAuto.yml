@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE Notifyのアクセストークン
-      NOTIFY_LINE_ID: ${{ secrets.NOTIFY_LINE_ID }} # LINE Notifyの通知先ID
+      NOTIFY_LINE_ID_LIST: ${{ secrets.NOTIFY_LINE_ID_LIST }} # LINE Notifyの通知先ID
       ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} # 品川区の団体登録ID
       ACCOUNT_PASSWORD: ${{ secrets.ACCOUNT_PASSWORD }} # 品川区の団体登録パスワード
     steps:

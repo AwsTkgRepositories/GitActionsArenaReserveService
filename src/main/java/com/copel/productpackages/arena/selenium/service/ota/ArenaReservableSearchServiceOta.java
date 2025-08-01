@@ -1,6 +1,8 @@
 package com.copel.productpackages.arena.selenium.service.ota;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import com.copel.productpackages.arena.selenium.service.entity.CourtUsageType;
 import com.copel.productpackages.arena.selenium.service.entity.ReservationSlot;
@@ -30,7 +32,7 @@ public class ArenaReservableSearchServiceOta {
      * 環境変数.
      * 通知の宛先LINE ID.
      */
-    private static String NOTIFY_LINE_ID = System.getenv("NOTIFY_LINE_ID");
+    private static List<String> NOTIFY_LINE_ID_LIST = System.getenv("NOTIFY_LINE_ID_LIST") != null ? Arrays.asList(System.getenv("NOTIFY_LINE_ID_LIST").split(",")) : List.of();
     /**
      * 環境変数.
      * GitHUB Actionsに入力された対象体育館名.
@@ -53,7 +55,7 @@ public class ArenaReservableSearchServiceOta {
         ArenaReservableSearchServiceOta service
             = new ArenaReservableSearchServiceOta(
                     LINE_CHANNEL_ACCESS_TOKEN,
-                    NOTIFY_LINE_ID,
+                    NOTIFY_LINE_ID_LIST,
                     大田区体育館.getEnumByName(TARGET_ARENA_NAME),
                     CourtUsageType.getEnumByCourtName大田区(大田区体育館.getEnumByName(TARGET_ARENA_NAME), TARGET_COURT_NAME));
         service.execute();
@@ -66,7 +68,7 @@ public class ArenaReservableSearchServiceOta {
     /**
      * 結果の送信先LINE ID.
      */
-    private String toLineId;
+    private List<String> notifyLineIdList;
     /**
      * チャンネルアクセストークン.
      */
@@ -83,16 +85,16 @@ public class ArenaReservableSearchServiceOta {
     /**
      * コンストラクタ.
      */
-    public ArenaReservableSearchServiceOta(final String channelAccessToken, final String toLineId, final 大田区体育館 targetArena, final CourtUsageType courtType) {
+    public ArenaReservableSearchServiceOta(final String channelAccessToken, final List<String> notifyLineIdList, final 大田区体育館 targetArena, final CourtUsageType courtType) {
         this.webBrowser = new WebBrowser(true);
-        this.toLineId = toLineId;
+        this.notifyLineIdList = notifyLineIdList;
         this.channelAccessToken = channelAccessToken;
         this.targetArena = targetArena;
         this.courtType = courtType;
     }
-    public ArenaReservableSearchServiceOta(final boolean isHeadless, final String channelAccessToken, final String toLineId, final 大田区体育館 targetArena, final CourtUsageType courtType) {
+    public ArenaReservableSearchServiceOta(final boolean isHeadless, final String channelAccessToken, final List<String> notifyLineIdList, final 大田区体育館 targetArena, final CourtUsageType courtType) {
         this.webBrowser = new WebBrowser(isHeadless);
-        this.toLineId = toLineId;
+        this.notifyLineIdList = notifyLineIdList;
         this.channelAccessToken = channelAccessToken;
         this.targetArena = targetArena;
         this.courtType = courtType;
@@ -199,10 +201,12 @@ public class ArenaReservableSearchServiceOta {
 
             // 検索結果をLINEに送信
             if (slotLot.isTargetExists()) {
-                LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-                lineMessagingAPI.addMessage("【大田区】\\n【" + this.targetArena.name() + "・" + this.courtType.getCourtNameBy大田区体育館(this.targetArena) + "】\\n\\n");
-                lineMessagingAPI.addMessage(slotLot.toString());
-                lineMessagingAPI.sendAll();
+                for (final String notifyLineId : this.notifyLineIdList) {
+                    LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                    lineMessagingAPI.addMessage("【大田区】\\n【" + this.targetArena.name() + "・" + this.courtType.getCourtNameBy大田区体育館(this.targetArena) + "】\\n\\n");
+                    lineMessagingAPI.addMessage(slotLot.toString());
+                    lineMessagingAPI.sendAll();
+                }
                 log.info("LINEに通知を送信しました");
             } else {
                 log.info("通知対象の枠が存在しないため、LINE通知を行いませんでした");
@@ -215,10 +219,12 @@ public class ArenaReservableSearchServiceOta {
             e.printStackTrace();
 
             // エラーをLINEに通知
-            LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.toLineId);
-            lineMessagingAPI.addMessage("【大田区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
-            lineMessagingAPI.addMessage(e.getMessage());
-            lineMessagingAPI.sendSeparate();
+            for (final String notifyLineId : this.notifyLineIdList) {
+                LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                lineMessagingAPI.addMessage("【大田区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
+                lineMessagingAPI.addMessage(e.getMessage());
+                lineMessagingAPI.sendSeparate();
+            }
         }
     }
 }

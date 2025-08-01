@@ -357,6 +357,21 @@ public class WebBrowser {
     }
 
     /**
+     * 指定したXPathの要素が存在するかを判定する.
+     *
+     * @param xpath XPath
+     * @return 要素が存在すればtrue、存在しなければfalse
+     */
+    public boolean existsByXpath(final String xpath) {
+        try {
+            this.wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+            return true;
+        } catch (org.openqa.selenium.TimeoutException e) {
+            return false;
+        }
+    }
+
+    /**
      * ドライバを終了する.
      */
     public void quit() {

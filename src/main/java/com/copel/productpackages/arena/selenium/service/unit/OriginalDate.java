@@ -173,7 +173,7 @@ public class OriginalDate implements Comparable<OriginalDate> {
     }
 
     /**
-     * 引数で指定した年を足す
+     * 引数で指定した年を足す.
      *
      * @param year 年
      */
@@ -182,12 +182,21 @@ public class OriginalDate implements Comparable<OriginalDate> {
     }
 
     /**
-     * 引数で指定した月を足す
+     * 引数で指定した月を足す.
      *
      * @param months 月
      */
     public void plusMonths(final int months) {
         this.date = this.date.plusMonths(months);
+    }
+
+    /**
+     * 引数で指定した日を足す.
+     *
+     * @param day 日
+     */
+    public void plusDay(final int day) {
+        this.date = this.date.plusDays(day);
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.copel.productpackages.arena.selenium.service.shinagawa;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
 
@@ -23,7 +25,7 @@ public class ArenaResereMonthlyLotteryServiceShinagawa {
      * 環境変数.
      * 通知の宛先LINE ID.
      */
-    private static String NOTIFY_LINE_ID = System.getenv("NOTIFY_LINE_ID");
+    private static List<String> NOTIFY_LINE_ID_LIST = System.getenv("NOTIFY_LINE_ID_LIST") != null ? Arrays.asList(System.getenv("NOTIFY_LINE_ID_LIST").split(",")) : List.of();
     /**
      * 環境変数.
      * 品川区の団体登録ID.
@@ -47,7 +49,7 @@ public class ArenaResereMonthlyLotteryServiceShinagawa {
     /**
      * 結果の送信先LINE ID.
      */
-    private String toLineId;
+    private List<String> notifyLineIdList;
     /**
      * チャンネルアクセストークン.
      */
@@ -68,17 +70,17 @@ public class ArenaResereMonthlyLotteryServiceShinagawa {
     /**
      * コンストラクタ.
      */
-    public ArenaResereMonthlyLotteryServiceShinagawa(final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final 品川区体育館 targetArena) {
+    public ArenaResereMonthlyLotteryServiceShinagawa(final String channelAccessToken, final List<String> notifyLineIdList,final String accountId, final String accountPassword, final 品川区体育館 targetArena) {
         this.webBrowser = new WebBrowser(true);
-        this.toLineId = toLineId;
+        this.notifyLineIdList = notifyLineIdList;
         this.channelAccessToken = channelAccessToken;
         this.accountId = accountId;
         this.accountPassword = accountPassword;
         this.targetArena = targetArena;
     }
-    public ArenaResereMonthlyLotteryServiceShinagawa(final boolean isHeadlessMode, final String channelAccessToken, final String toLineId,final String accountId, final String accountPassword, final 品川区体育館 targetArena) {
+    public ArenaResereMonthlyLotteryServiceShinagawa(final boolean isHeadlessMode, final String channelAccessToken, final List<String> notifyLineIdList,final String accountId, final String accountPassword, final 品川区体育館 targetArena) {
         this.webBrowser = new WebBrowser(isHeadlessMode);
-        this.toLineId = toLineId;
+        this.notifyLineIdList = notifyLineIdList;
         this.channelAccessToken = channelAccessToken;
         this.accountId = accountId;
         this.accountPassword = accountPassword;
