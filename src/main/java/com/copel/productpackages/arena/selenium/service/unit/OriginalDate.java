@@ -64,6 +64,7 @@ public class OriginalDate implements Comparable<OriginalDate> {
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            log.warn("祝日APIの取得に失敗しましたが、処理は続行します（今回の実行では祝日判定が全てfalseとなります）");
         }
 
         // 来年の祝日を取得
@@ -90,6 +91,7 @@ public class OriginalDate implements Comparable<OriginalDate> {
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            log.warn("祝日APIの取得に失敗しましたが、処理は続行します（今回の実行では祝日判定が全てfalseとなります）");
         }
     }
 
@@ -105,6 +107,9 @@ public class OriginalDate implements Comparable<OriginalDate> {
         DateTimeFormatter.ofPattern("MM.dd"),
         DateTimeFormatter.ofPattern("MMdd"),
         DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+        DateTimeFormatter.ofPattern("yyyy/MM/d"),
+        DateTimeFormatter.ofPattern("yyyy/M/d"),
+        DateTimeFormatter.ofPattern("yyyy/M/dd"),
         DateTimeFormatter.ofPattern("yyyy-MM-dd"),
         DateTimeFormatter.ofPattern("yyyy.MM.dd"),
         DateTimeFormatter.ofPattern("yyyyMMdd")
@@ -263,6 +268,11 @@ public class OriginalDate implements Comparable<OriginalDate> {
             case SUNDAY: return "日";
             default: return "";
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.toDisplayStringWithoutYear();
     }
 
     @Override

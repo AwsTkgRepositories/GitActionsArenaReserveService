@@ -15,5 +15,4 @@ class OriginalDateTests {
         originalDate = new OriginalDate("2026/10/12");
         assertTrue(originalDate.is祝日());
     }
-
 }

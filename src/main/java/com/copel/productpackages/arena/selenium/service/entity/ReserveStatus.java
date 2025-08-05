@@ -62,4 +62,13 @@ public enum ReserveStatus {
             return "-";
         }
     }
+
+    /**
+     * 現時点で予約可能であるかどうかを判定します.
+     *
+     * @return 予約可能であればtrue、それ以外はfalse
+     */
+    public boolean is現在予約可能() {
+        return this == 予約可能;
+    }
 }

@@ -408,6 +408,26 @@ public class OriginalDateTime implements Comparable<OriginalDateTime> {
         }
     }
 
+    /**
+     * このDateTimeに秒数を足します.
+     *
+     * @param seconds 足す秒数
+     */
+    public void plusSeconds(final int seconds) {
+        if (this.dateTime != null) {
+            this.dateTime = this.dateTime.plusSeconds(seconds);
+        } else {
+            this.dateTime = LocalDateTime.now();
+        }
+    }
+
+    public int getHour() {
+        return this.dateTime.getHour();
+    }
+    public int getMinute() {
+        return this.dateTime.getMinute();
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(dateTime);

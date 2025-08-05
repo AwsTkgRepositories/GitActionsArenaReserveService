@@ -28,9 +28,7 @@ public enum 品川区抽選枠 {
      *
      * @return Xpath
      */
-    public String getButtonXpathAfterTwoMonth() {
-        OriginalDate dateAfterTwoMonth = new OriginalDate();
-        dateAfterTwoMonth.plusMonths(2);
+    public String getButtonXpathAfterTwoMonth(final OriginalDate dateAfterTwoMonth) {
         switch (this) {
             case 午前:
                 return "//*[@id=\"" + dateAfterTwoMonth.toYYYYMMDD() + "_10\"]/img";
@@ -50,9 +48,7 @@ public enum 品川区抽選枠 {
      *
      * @return Xpath
      */
-    public String getInputXpathAfterTwoMonth() {
-        OriginalDate dateAfterTwoMonth = new OriginalDate();
-        dateAfterTwoMonth.plusMonths(2);
+    public String getInputXpathAfterTwoMonth(final OriginalDate dateAfterTwoMonth) {
         switch (this) {
             case 午前:
                 return "//*[@id=\"S_" + dateAfterTwoMonth.toYYYYMMDD() + "_10\"]";
