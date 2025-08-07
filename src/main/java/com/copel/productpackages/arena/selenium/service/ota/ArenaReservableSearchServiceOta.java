@@ -187,8 +187,9 @@ public class ArenaReservableSearchServiceOta {
                         チェック済日付 = 日付;
                     }
                 }
-                this.webBrowser.clickByXpath("//*[@id=\"formMain\"]/main/div[3]/div[1]/div[3]/ul/li[1]/div[1]/a[2]");
+                this.webBrowser.clickByXpathWithJS("//*[@id=\"formMain\"]/main/div[3]/div[1]/div[3]/ul/li[1]/div[1]/a[2]");
                 log.info("「次の7日分」をクリック");
+                this.webBrowser.wait(2);
             }
 
             // ドライバを閉じる
