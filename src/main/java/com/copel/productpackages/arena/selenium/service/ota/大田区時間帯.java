@@ -14,8 +14,10 @@ public enum 大田区時間帯 {
      */
     public int getIndex(final 大田区体育館 arena) {
         switch (arena) {
+            case 大森西区民活動施設:
             case 田園調布せせらぎ館:
                 return this.ordinal() + 1;
+            case 大田区民プラザ:
             case 大森スポーツセンター:
                 switch (this) {
                     case 午前:

@@ -3,6 +3,8 @@ package com.copel.productpackages.arena.selenium.service.ota;
 import com.copel.productpackages.arena.selenium.service.entity.CourtUsageType;
 
 public enum 大田区体育館 {
+    大森西区民活動施設,
+    大田区民プラザ,
     田園調布せせらぎ館,
     大森スポーツセンター;
 
@@ -22,10 +24,14 @@ public enum 大田区体育館 {
      */
     public String get施設選択画面Xpath() {
         switch (this) {
+            case 大田区民プラザ:
+                return "//*[@id=\"r_record2\"]";
             case 田園調布せせらぎ館:
                 return "//*[@id=\"r_record3\"]";
             case 大森スポーツセンター:
                 return "//*[@id=\"r_record4\"]";
+            case 大森西区民活動施設:
+                return "//*[@id=\"r_record5\"]";
             default:
                 return null;
         }
@@ -38,6 +44,9 @@ public enum 大田区体育館 {
      * @param courtType コート種別
      * @return Xpath
      */
+    public String get日付Xpath(final CourtUsageType courtType) {
+        return this.get日付Xpath(1, courtType);
+    }
     public String get日付Xpath(final int dateIndex, final CourtUsageType courtType) {
         switch (this) {
             case 田園調布せせらぎ館:
@@ -54,6 +63,9 @@ public enum 大田区体育館 {
                     default:
                         return null;
                 }
+            case 大森西区民活動施設:
+            case 大田区民プラザ:
+                return "//*[@id=\"formMain\"]/main/div[3]/div[1]/div[3]/ul/li/div[2]/table/tbody/tr[1]/th[" + Integer.toString(dateIndex + 1) + "]/p[1]";
             case 大森スポーツセンター:
                 switch (courtType) {
                     case 全面:
@@ -94,6 +106,9 @@ public enum 大田区体育館 {
                     default:
                         return null;
                 }
+            case 大森西区民活動施設:
+            case 大田区民プラザ:
+                return "//*[@id=\"formMain\"]/main/div[3]/div[1]/div[3]/ul/li/div[2]/table/tbody/tr[" + Integer.toString(slotIndex + 1) + "]/td[" + Integer.toString(dateIndex) + "]/img";
             case 大森スポーツセンター:
                 switch (courtType) {
                     case 全面:

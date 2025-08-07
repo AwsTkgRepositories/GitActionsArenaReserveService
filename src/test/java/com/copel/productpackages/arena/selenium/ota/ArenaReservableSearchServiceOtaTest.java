@@ -30,4 +30,18 @@ class ArenaReservableSearchServiceOtaTest {
             = new ArenaReservableSearchServiceOta(true, null, null, 大田区体育館.田園調布せせらぎ館, CourtUsageType.半面2);
         service.execute();
     }
+
+    @Test
+    void 大田区民プラザ体育室() throws InterruptedException, IOException {
+        ArenaReservableSearchServiceOta service
+            = new ArenaReservableSearchServiceOta(true, null, null, 大田区体育館.大田区民プラザ, CourtUsageType.全面);
+        service.execute();
+    }
+
+    @Test
+    void 大森西区民活動施設体育室() throws InterruptedException, IOException {
+        ArenaReservableSearchServiceOta service
+            = new ArenaReservableSearchServiceOta(true, null, null, 大田区体育館.大森西区民活動施設, CourtUsageType.全面);
+        service.execute();
+    }
 }

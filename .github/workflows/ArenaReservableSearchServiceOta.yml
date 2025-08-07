@@ -62,6 +62,18 @@ jobs:
           TARGET_COURT_NAME: 体育室B
         run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
 
+      - name: 大田区民プラザ・体育室の空き状況を取得
+        env:
+          TARGET_ARENA_NAME: 大田区民プラザ
+          TARGET_COURT_NAME: 体育室
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
+
+      - name: 大森西区民活動施設
+        env:
+          TARGET_ARENA_NAME: 大森西区民活動施設
+          TARGET_COURT_NAME: 体育室
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
+
       - name: 終了時間を記録
         run: |
           echo "##[group]ジョブ終了時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"

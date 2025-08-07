@@ -22,6 +22,9 @@ public enum CourtUsageType {
      */
     public static CourtUsageType getEnumByCourtName大田区(final 大田区体育館 arena, final String courtName) {
         switch (arena) {
+            case 大森西区民活動施設:
+            case 大田区民プラザ:
+                return 全面;
             case 田園調布せせらぎ館:
                 if ("体育室A".equals(courtName)) {
                     return 半面1;
@@ -53,6 +56,9 @@ public enum CourtUsageType {
      */
     public String getCourtNameBy大田区体育館(final 大田区体育館 arena) {
         switch (arena) {
+            case 大森西区民活動施設:
+            case 大田区民プラザ:
+                return "体育室";
             case 田園調布せせらぎ館:
                 switch (this) {
                     case 全面:

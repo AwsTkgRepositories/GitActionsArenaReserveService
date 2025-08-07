@@ -48,6 +48,7 @@ public class TimeSlot {
     public static TimeSlot getTimeSlotOtaByName(final 大田区時間帯 時間帯, final 大田区体育館 体育館, final OriginalDate date) {
         TimeSlot slot = null;
         switch (体育館) {
+            case 大森西区民活動施設:
             case 田園調布せせらぎ館:
                 switch (時間帯) {
                     case 午前 :
@@ -65,6 +66,7 @@ public class TimeSlot {
                     default:
                         break;
                 }
+            case 大田区民プラザ:
             case 大森スポーツセンター:
                 switch (時間帯) {
                     case 午前 :
