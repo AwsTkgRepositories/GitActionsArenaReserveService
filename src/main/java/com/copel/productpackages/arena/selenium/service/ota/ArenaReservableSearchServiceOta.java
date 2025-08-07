@@ -118,9 +118,13 @@ public class ArenaReservableSearchServiceOta {
             this.webBrowser.clickByXpath("//*[@id=\"jouken1\"]/div[2]/ul/li[1]/label");
             log.info("「利用目的で検索」を選択");
 
+            this.webBrowser.wait(1);
+
             this.webBrowser.scrollToElementByXpath("//*[@id=\"catSel1\"]/div[2]/ul/li[1]/label");
             this.webBrowser.clickByXpathWithJS("//*[@id=\"catSel1\"]/div[2]/ul/li[1]/label");
             log.info("「集会」を選択");
+
+            this.webBrowser.wait(1);
 
             this.webBrowser.scrollToElementByXpath("//*[@id=\"genSel1\"]/div[2]/ul/li[38]/label");
             this.webBrowser.clickByXpathWithJS("//*[@id=\"genSel1\"]/div[2]/ul/li[38]/label");
@@ -132,8 +136,12 @@ public class ArenaReservableSearchServiceOta {
             this.webBrowser.clickByXpathWithJS("//*[@id=\"submitbutton\"]");
             log.info("「選択した条件で次へ」を選択");
 
+            this.webBrowser.wait(1);
+
             this.webBrowser.clickByXpathWithJS(this.targetArena.get施設選択画面Xpath());
             log.info("「" + this.targetArena.name() + "」を選択");
+
+            this.webBrowser.wait(1);
 
             this.webBrowser.clickByXpath("//*[@id=\"submitbutton\"]");
             log.info("「選択した施設で検索」を選択");

@@ -81,7 +81,6 @@ public class WebBrowser {
         options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
                 "AppleWebKit/537.36 (KHTML, like Gecko) " +
                 "Chrome/122.0.0.0 Safari/537.36");
-        options.addArguments("--window-size=1280x1696");
 
         // ヘッドレスモードの指定
         if (isHeadlessMode && !this.isLambda && !this.isGithubActions) {
@@ -96,6 +95,7 @@ public class WebBrowser {
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
             options.addArguments("--disable-gpu");
+            options.addArguments("--window-size=1280x1696");
             options.addArguments("--single-process");
             options.addArguments("--disable-extensions");
             options.addArguments("--disable-dev-tools");
@@ -110,9 +110,11 @@ public class WebBrowser {
             options.addArguments("--headless=new");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--window-size=1280x1696");
         }
         // ローカルではChromeDriver を自動でセットアップ
         else {
+            options.addArguments("--window-size=1280x1696");
             WebDriverManager.chromedriver().setup();
         }
 
