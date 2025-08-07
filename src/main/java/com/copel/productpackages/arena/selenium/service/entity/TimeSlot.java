@@ -2,6 +2,8 @@ package com.copel.productpackages.arena.selenium.service.entity;
 
 import java.util.Objects;
 
+import com.copel.productpackages.arena.selenium.service.ota.大田区体育館;
+import com.copel.productpackages.arena.selenium.service.ota.大田区時間帯;
 import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 
@@ -43,18 +45,40 @@ public class TimeSlot {
      * @param slotName
      * @return
      */
-    public static TimeSlot getTimeSlotOtaByName(final String slotName, final OriginalDate date) {
+    public static TimeSlot getTimeSlotOtaByName(final 大田区時間帯 時間帯, final 大田区体育館 体育館, final OriginalDate date) {
         TimeSlot slot = null;
-        switch (slotName) {
-            case "午前" :
-                slot = new TimeSlot(slotName, new OriginalDateTime(date, 9, 0, 0), new OriginalDateTime(date, 12, 0, 0));
-                break;
-            case "午後" :
-                slot = new TimeSlot(slotName, new OriginalDateTime(date, 13, 0, 0), new OriginalDateTime(date, 17, 00, 0));
-                break;
-            case "夜間" :
-                slot = new TimeSlot(slotName, new OriginalDateTime(date, 18, 0, 0), new OriginalDateTime(date, 22, 0, 0));
-                break;
+        switch (体育館) {
+            case 田園調布せせらぎ館:
+                switch (時間帯) {
+                    case 午前 :
+                        slot = new TimeSlot(時間帯.name(), new OriginalDateTime(date, 9, 0, 0), new OriginalDateTime(date, 11, 30, 0));
+                        break;
+                    case 午後1 :
+                        slot = new TimeSlot(時間帯.name(), new OriginalDateTime(date, 12, 30, 0), new OriginalDateTime(date, 15, 00, 0));
+                        break;
+                    case 午後2 :
+                        slot = new TimeSlot(時間帯.name(), new OriginalDateTime(date, 16, 0, 0), new OriginalDateTime(date, 18, 30, 0));
+                        break;
+                    case 夜間 :
+                        slot = new TimeSlot(時間帯.name(), new OriginalDateTime(date, 19, 30, 0), new OriginalDateTime(date, 22, 0, 0));
+                        break;
+                    default:
+                        break;
+                }
+            case 大森スポーツセンター:
+                switch (時間帯) {
+                    case 午前 :
+                        slot = new TimeSlot(時間帯.name(), new OriginalDateTime(date, 9, 0, 0), new OriginalDateTime(date, 12, 0, 0));
+                        break;
+                    case 午後1 :
+                        slot = new TimeSlot(時間帯.name(), new OriginalDateTime(date, 13, 0, 0), new OriginalDateTime(date, 17, 00, 0));
+                        break;
+                    case 夜間 :
+                        slot = new TimeSlot(時間帯.name(), new OriginalDateTime(date, 18, 0, 0), new OriginalDateTime(date, 22, 0, 0));
+                        break;
+                    default:
+                        break;
+                }
             default:
                 break;
         }

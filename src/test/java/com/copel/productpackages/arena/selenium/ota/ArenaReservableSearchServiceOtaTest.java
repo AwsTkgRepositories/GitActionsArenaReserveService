@@ -13,21 +13,21 @@ class ArenaReservableSearchServiceOtaTest {
     @Test
     void 大森スポーツセンター空き状況取得() throws InterruptedException, IOException {
         ArenaReservableSearchServiceOta service
-            = new ArenaReservableSearchServiceOta(true, null, null, 大田区体育館.大森スポーツセンター, CourtUsageType.全面);
+            = new ArenaReservableSearchServiceOta(false, null, null, 大田区体育館.大森スポーツセンター, CourtUsageType.全面);
         service.execute();
     }
 
     @Test
     void 田園調布せせらぎ館体育室A空き状況取得() throws InterruptedException, IOException {
         ArenaReservableSearchServiceOta service
-            = new ArenaReservableSearchServiceOta(true, null, null, 大田区体育館.田園調布せせらぎ館, CourtUsageType.半面1);
+            = new ArenaReservableSearchServiceOta(false, null, null, 大田区体育館.田園調布せせらぎ館, CourtUsageType.半面1);
         service.execute();
     }
 
     @Test
     void 田園調布せせらぎ館体育室B空き状況取得() throws InterruptedException, IOException {
         ArenaReservableSearchServiceOta service
-            = new ArenaReservableSearchServiceOta(true, null, null, 大田区体育館.田園調布せせらぎ館, CourtUsageType.半面2);
+            = new ArenaReservableSearchServiceOta(false, null, null, 大田区体育館.田園調布せせらぎ館, CourtUsageType.半面2);
         service.execute();
     }
 }

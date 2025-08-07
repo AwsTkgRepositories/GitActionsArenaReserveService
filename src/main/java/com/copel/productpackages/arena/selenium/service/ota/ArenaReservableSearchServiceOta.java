@@ -118,13 +118,19 @@ public class ArenaReservableSearchServiceOta {
             this.webBrowser.clickByXpath("//*[@id=\"jouken1\"]/div[2]/ul/li[1]/label");
             log.info("「利用目的で検索」を選択");
 
+            this.webBrowser.wait(1);
+
             this.webBrowser.scrollToElementByXpath("//*[@id=\"catSel1\"]/div[2]/ul/li[1]/label");
             this.webBrowser.clickByXpath("//*[@id=\"catSel1\"]/div[2]/ul/li[1]/label");
             log.info("「集会」を選択");
 
+            this.webBrowser.wait(1);
+
             this.webBrowser.scrollToElementByXpath("//*[@id=\"genSel1\"]/div[2]/ul/li[38]/label");
             this.webBrowser.clickByXpathWithJS("//*[@id=\"genSel1\"]/div[2]/ul/li[38]/label");
             log.info("スクロールして「バスケットボール」を選択");
+
+            this.webBrowser.wait(1);
 
             this.webBrowser.scrollToElementByXpath("//*[@id=\"submitbutton\"]");
             this.webBrowser.clickByXpathWithJS("//*[@id=\"submitbutton\"]");
@@ -150,32 +156,21 @@ public class ArenaReservableSearchServiceOta {
                         日付.plusYear(1);
                     }
 
-                    String 午前 = this.webBrowser.getAltAttributeByXpath(this.targetArena.get予約枠コマXpath(i, 1, this.courtType));
-                    log.info("{}午前: {}", 日付.toDisplayStringWithoutYear(), 午前);
-                    ReservationSlot slot = new ReservationSlot();
-                    slot.setSlotDate(日付);
-                    slot.setUsageType(this.courtType);
-                    slot.setReserveStatus(ReserveStatus.getEnumByOta(午前));
-                    slot.setTimeSlot(TimeSlot.getTimeSlotOtaByName("午前", 日付));
-                    slotLot.add(slot);
-
-                    String 午後 = this.webBrowser.getAltAttributeByXpath(this.targetArena.get予約枠コマXpath(i, 2, this.courtType));
-                    log.info("{}午後: {}", 日付.toDisplayStringWithoutYear(), 午後);
-                    slot = new ReservationSlot();
-                    slot.setSlotDate(日付);
-                    slot.setUsageType(this.courtType);
-                    slot.setReserveStatus(ReserveStatus.getEnumByOta(午後));
-                    slot.setTimeSlot(TimeSlot.getTimeSlotOtaByName("午後", 日付));
-                    slotLot.add(slot);
-
-                    String 夜間 = this.webBrowser.getAltAttributeByXpath(this.targetArena.get予約枠コマXpath(i, 3, this.courtType));
-                    log.info("{}夜間: {}", 日付.toDisplayStringWithoutYear(), 夜間);
-                    slot = new ReservationSlot();
-                    slot.setSlotDate(日付);
-                    slot.setUsageType(this.courtType);
-                    slot.setReserveStatus(ReserveStatus.getEnumByOta(夜間));
-                    slot.setTimeSlot(TimeSlot.getTimeSlotOtaByName("夜間", 日付));
-                    slotLot.add(slot);
+                    // 空き状況を取得
+                    for (大田区時間帯 時間帯 : 大田区時間帯.values()) {
+                        int 時間帯index = 時間帯.getIndex(this.targetArena);
+                        if (時間帯index > 0) {
+                            String 時間帯Xpath = this.targetArena.get予約枠コマXpath(i, 時間帯index, this.courtType);
+                            String 空き状況 = this.webBrowser.getAltAttributeByXpath(時間帯Xpath);
+                            log.info("{}{}: {}", 日付.toDisplayStringWithoutYear(), 時間帯.name(), 空き状況);
+                            ReservationSlot slot = new ReservationSlot();
+                            slot.setSlotDate(日付);
+                            slot.setUsageType(this.courtType);
+                            slot.setReserveStatus(ReserveStatus.getEnumByOta(空き状況));
+                            slot.setTimeSlot(TimeSlot.getTimeSlotOtaByName(時間帯, this.targetArena, 日付));
+                            slotLot.add(slot);
+                        }
+                    }
 
                     // 本日から7ヵ月後ちょうどの日付、または既にチェック済みの日付が今チェックしている日付よりも後の場合(無限ループを阻止)、処理を終了する
                     if (日付.isSameAsTodayPlusMonthsFromToday(7) || チェック済日付.isAfter(日付)) {
