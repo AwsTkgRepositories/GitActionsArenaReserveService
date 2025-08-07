@@ -107,6 +107,9 @@ public class ArenaReservableSearchServiceOta {
      * @throws IOException
      */
     public void execute() throws InterruptedException, IOException {
+        // 結果を保持するLot
+        ReservationSlotLot slotLot = new ReservationSlotLot();
+
         // うぐいすネットにアクセス
         this.webBrowser.access("https://www.yoyaku.city.ota.tokyo.jp/eshisetsu/menu/Welcome.cgi");
 
@@ -147,7 +150,6 @@ public class ArenaReservableSearchServiceOta {
             log.info("「選択した施設で検索」を選択");
 
             // 空き状況を取得
-            ReservationSlotLot slotLot = new ReservationSlotLot();
             OriginalDate チェック済日付 = new OriginalDate();
             boolean isContinue = true;
             while (isContinue) {
@@ -223,6 +225,13 @@ public class ArenaReservableSearchServiceOta {
                 lineMessagingAPI.addMessage("【大田区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
                 lineMessagingAPI.addMessage(e.getMessage());
                 lineMessagingAPI.sendSeparate();
+                // 検索結果をLINEに送信
+                if (slotLot.isTargetExists()) {
+                    lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                    lineMessagingAPI.addMessage("【大田区】\\n【" + this.targetArena.name() + "・" + this.courtType.getCourtNameBy大田区体育館(this.targetArena) + "】\\n\\n下記は途中まで検索ができたため、通知します。\\n\\n");
+                    lineMessagingAPI.addMessage(slotLot.toString());
+                    lineMessagingAPI.sendAll();
+                }
             }
         }
     }
