@@ -118,13 +118,9 @@ public class ArenaReservableSearchServiceOta {
             this.webBrowser.clickByXpath("//*[@id=\"jouken1\"]/div[2]/ul/li[1]/label");
             log.info("「利用目的で検索」を選択");
 
-            this.webBrowser.wait(1);
-
             this.webBrowser.scrollToElementByXpath("//*[@id=\"catSel1\"]/div[2]/ul/li[1]/label");
-            this.webBrowser.clickByXpath("//*[@id=\"catSel1\"]/div[2]/ul/li[1]/label");
+            this.webBrowser.clickByXpathWithJS("//*[@id=\"catSel1\"]/div[2]/ul/li[1]/label");
             log.info("「集会」を選択");
-
-            this.webBrowser.wait(1);
 
             this.webBrowser.scrollToElementByXpath("//*[@id=\"genSel1\"]/div[2]/ul/li[38]/label");
             this.webBrowser.clickByXpathWithJS("//*[@id=\"genSel1\"]/div[2]/ul/li[38]/label");
