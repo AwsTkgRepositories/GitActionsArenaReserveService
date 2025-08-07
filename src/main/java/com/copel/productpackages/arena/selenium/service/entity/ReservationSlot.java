@@ -2,12 +2,15 @@ package com.copel.productpackages.arena.selenium.service.entity;
 
 import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 
+import lombok.Data;
+
 /**
  * 予約枠クラス.
  *
  * @author 鈴木一矢
  *
  */
+@Data
 public class ReservationSlot implements Comparable<ReservationSlot> {
     /**
      * 日付.
@@ -92,30 +95,5 @@ public class ReservationSlot implements Comparable<ReservationSlot> {
         result = 31 * result + (this.usageType != null ? this.usageType.hashCode() : 0);
         result = 31 * result + (this.reserveStatus != null ? this.reserveStatus.hashCode() : 0);
         return result;
-    }
-
-    public OriginalDate getSlotDate() {
-        return slotDate;
-    }
-    public void setSlotDate(OriginalDate slotDate) {
-        this.slotDate = slotDate;
-    }
-    public TimeSlot getTimeSlot() {
-        return timeSlot;
-    }
-    public void setTimeSlot(TimeSlot timeSlot) {
-        this.timeSlot = timeSlot;
-    }
-    public CourtUsageType getUsageType() {
-        return usageType;
-    }
-    public void setUsageType(CourtUsageType usageType) {
-        this.usageType = usageType;
-    }
-    public ReserveStatus getReserveStatus() {
-        return reserveStatus;
-    }
-    public void setReserveStatus(ReserveStatus reserveStatus) {
-        this.reserveStatus = reserveStatus;
     }
 }

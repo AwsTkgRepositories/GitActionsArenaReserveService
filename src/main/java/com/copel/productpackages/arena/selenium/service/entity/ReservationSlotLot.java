@@ -1,17 +1,22 @@
 package com.copel.productpackages.arena.selenium.service.entity;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 public class ReservationSlotLot implements Iterable<ReservationSlot> {
     /**
      * Lotオブジェクト.
      */
-    private Set<ReservationSlot> slotLot;
+    private List<ReservationSlot> slotLot;
 
     public ReservationSlotLot() {
-        this.slotLot = new HashSet<ReservationSlot>();
+        this.slotLot = new ArrayList<ReservationSlot>();
+    }
+
+    public void sort() {
+        Collections.sort(this.slotLot);
     }
 
     public Iterator<ReservationSlot> iterator() {
@@ -48,6 +53,7 @@ public class ReservationSlotLot implements Iterable<ReservationSlot> {
 
     @Override
     public String toString() {
+        this.sort();
         StringBuilder stringBuilder = new StringBuilder();
         for (final ReservationSlot slot : this.slotLot) {
             if (slot.is予約可能() && (slot.is土日祝日() || slot.is平日夜間())) {
