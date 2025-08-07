@@ -91,6 +91,8 @@ public class ArenaReservableSearchServiceShinagawa {
      * @throws IOException
      */
     public void execute() throws InterruptedException, IOException {
+        ReservationSlotLot resultLot = new ReservationSlotLot();
+
         // (0) URL先へアクセスする
         this.webBrowser.access("https://www.cm9.eprs.jp/shinagawa/web/");
 
@@ -112,7 +114,6 @@ public class ArenaReservableSearchServiceShinagawa {
             this.webBrowser.wait(3);
 
             // (2) 検索結果画面
-            ReservationSlotLot resultLot = new ReservationSlotLot();
             // 空き状況を取得する
             OriginalDateTime date = new OriginalDateTime();
 
@@ -221,10 +222,17 @@ public class ArenaReservableSearchServiceShinagawa {
 
             // エラーをLINEに通知
             for (final String notifyLineId : this.notifyLineIdList) {
-                LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
-                lineMessagingAPI.addMessage("【品川区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
-                lineMessagingAPI.addMessage(e.getMessage());
-                lineMessagingAPI.sendSeparate();
+                if (resultLot.isTargetExists()) {
+                    LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                    lineMessagingAPI.addMessage("【品川区】\\n【" + this.targetArena.name() + "】\\n\\n空き状況の取得中にエラーが発生しました。下記は途中まで検索ができたため、通知します。\\n\\n");
+                    lineMessagingAPI.addMessage(resultLot.toString());
+                    lineMessagingAPI.sendAll();
+                } else {
+                    LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                    lineMessagingAPI.addMessage("【品川区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
+                    lineMessagingAPI.addMessage(e.getMessage());
+                    lineMessagingAPI.sendSeparate();
+                }
             }
         }
     }

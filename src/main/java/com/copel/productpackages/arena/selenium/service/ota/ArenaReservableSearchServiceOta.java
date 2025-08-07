@@ -219,18 +219,17 @@ public class ArenaReservableSearchServiceOta {
             log.error("大田区の体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
             e.printStackTrace();
 
-            // エラーをLINEに通知
+            // 検索結果とエラーをLINEに送信
             for (final String notifyLineId : this.notifyLineIdList) {
                 LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
-                lineMessagingAPI.addMessage("【大田区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
-                lineMessagingAPI.addMessage(e.getMessage());
-                lineMessagingAPI.sendSeparate();
-                // 検索結果をLINEに送信
                 if (slotLot.isTargetExists()) {
-                    lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
-                    lineMessagingAPI.addMessage("【大田区】\\n【" + this.targetArena.name() + "・" + this.courtType.getCourtNameBy大田区体育館(this.targetArena) + "】\\n\\n下記は途中まで検索ができたため、通知します。\\n\\n");
+                    lineMessagingAPI.addMessage("【大田区】\\n【" + this.targetArena.name() + "・" + this.courtType.getCourtNameBy大田区体育館(this.targetArena) + "】\\n\\n空き状況の取得中にエラーが発生しました。下記は途中まで検索ができたため、通知します。\\n\\n");
                     lineMessagingAPI.addMessage(slotLot.toString());
                     lineMessagingAPI.sendAll();
+                } else {
+                    lineMessagingAPI.addMessage("【大田区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
+                    lineMessagingAPI.addMessage(e.getMessage());
+                    lineMessagingAPI.sendSeparate();
                 }
             }
         }
