@@ -276,6 +276,23 @@ public class ArenaReservableSearchServiceSetagaya {
 
             log.error("世田谷区の体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
             e.printStackTrace();
-        }
+
+            // 検索結果とエラーをLINEに送信
+            for (final String notifyLineId : this.notifyLineIdList) {
+                if (resultLot.isTargetExists()) {
+                    LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                    lineMessagingAPI.addMessage("【世田谷区】\\n【" + this.targetArena.name() + "】\\n\\n空き状況の取得中にエラーが発生しました。途中まで取得できた分を通知します。\\n\\n");
+                    lineMessagingAPI.addMessage(resultLot.toString());
+                    lineMessagingAPI.sendAll();
+                    log.info("LINEに通知を送信しました");
+                } else {
+                    log.info("通知対象の枠が存在しませんでした");
+                    LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                    lineMessagingAPI.addMessage("【世田谷区】\\n【" + this.targetArena.name() + "】\\n\\n世田谷区の空き状況の取得中にエラーが発生しました。");
+                    lineMessagingAPI.addMessage(resultLot.toString());
+                    lineMessagingAPI.sendAll();
+                }
+            }
+}
     }
 }
