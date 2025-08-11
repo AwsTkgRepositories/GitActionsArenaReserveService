@@ -68,11 +68,11 @@ jobs:
           TARGET_COURT_NAME: 体育室
         run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
 
-      - name: 大森西区民活動施設
-        env:
-          TARGET_ARENA_NAME: 大森西区民活動施設
-          TARGET_COURT_NAME: 体育室
-        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
+      # - name: 大森西区民活動施設
+      #   env:
+      #     TARGET_ARENA_NAME: 大森西区民活動施設
+      #     TARGET_COURT_NAME: 体育室
+      #   run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ota.ArenaReservableSearchServiceOta" -Dexec.classpathScope=runtime
 
       - name: 終了時間を記録
         run: |
