@@ -1,6 +1,7 @@
 package com.copel.productpackages.arena.selenium.service.setagaya;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.copel.productpackages.arena.selenium.service.entity.ReservationSlot;
 import com.copel.productpackages.arena.selenium.service.entity.ReservationSlotLot;
 import com.copel.productpackages.arena.selenium.service.entity.ReserveStatus;
 import com.copel.productpackages.arena.selenium.service.entity.TimeSlot;
+import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
 import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
 import com.copel.productpackages.arena.selenium.service.util.OriginalStringUtils;
@@ -37,6 +39,11 @@ public class ArenaReservableSearchServiceSetagaya {
     private static List<String> NOTIFY_LINE_ID_LIST = System.getenv("NOTIFY_LINE_ID_LIST") != null ? Arrays.asList(System.getenv("NOTIFY_LINE_ID_LIST").split(",")) : List.of();
     /**
      * 環境変数.
+     * 追加の通知の宛先LINE ID.
+     */
+    private static List<String> EXTEND_NOTIFY_LINE_ID_LIST = System.getenv("EXTEND_NOTIFY_LINE_ID_LIST") != null ? Arrays.asList(System.getenv("EXTEND_NOTIFY_LINE_ID_LIST").split(",")) : List.of();
+    /**
+     * 環境変数.
      * GitHUB Actionsに入力された対象体育館名.
      */
     private static String TARGET_ARENA_NAME = System.getenv("TARGET_ARENA_NAME");
@@ -45,6 +52,10 @@ public class ArenaReservableSearchServiceSetagaya {
      * GitHUB Actionsに入力された対象コート名.
      */
     private static String TARGET_COURT_NAME = System.getenv("TARGET_COURT_NAME");
+    /**
+     * けやきネットのURL.
+     */
+    private static String けやきネットURL = "https://setagaya.keyakinet.net/Web/Home/WgR_ModeSelect";
 
     /**
      * メイン文.
@@ -54,10 +65,13 @@ public class ArenaReservableSearchServiceSetagaya {
      * @throws InterruptedException 
      */
     public static void main(String[] args) throws InterruptedException, IOException {
+        List<String> notifyLineIdList = new ArrayList<String>();
+        notifyLineIdList.addAll(NOTIFY_LINE_ID_LIST);
+        notifyLineIdList.addAll(EXTEND_NOTIFY_LINE_ID_LIST);
         ArenaReservableSearchServiceSetagaya service
             = new ArenaReservableSearchServiceSetagaya(
                     LINE_CHANNEL_ACCESS_TOKEN,
-                    NOTIFY_LINE_ID_LIST,
+                    notifyLineIdList,
                     世田谷区体育館.getEnumByName(TARGET_ARENA_NAME));
         service.execute();
     }
@@ -105,7 +119,7 @@ public class ArenaReservableSearchServiceSetagaya {
         ReservationSlotLot resultLot = new ReservationSlotLot();
 
         // けやきネットにアクセス
-        this.webBrowser.access("https://setagaya.keyakinet.net/Web/Home/WgR_ModeSelect");
+        this.webBrowser.access(けやきネットURL);
 
         try {
             // 一覧画面へ遷移
@@ -123,7 +137,7 @@ public class ArenaReservableSearchServiceSetagaya {
             log.info("「検索ボタン」を押下");
 
             this.webBrowser.wait(1);
-            this.webBrowser.clickByXpath("//*[@id=\"shisetsutbl\"]/tr[1]/td[2]/label");
+            this.webBrowser.clickByXpath(this.targetArena.get施設選択画面Xpath());
             log.info("「宮坂区民センター」を選択");
 
             this.webBrowser.clickByXpath("//*[@id=\"btnNext\"]");
@@ -240,15 +254,21 @@ public class ArenaReservableSearchServiceSetagaya {
             // ドライバを閉じる
             this.webBrowser.quit();
 
-            // 検索結果をLINEに送信
-            if (resultLot.isTargetExists()) {
-//                LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.notifyLineIdList);
-//                lineMessagingAPI.addMessage("【世田谷区】\\n【" + this.targetArena.name() + "・" + this.courtType.getCourtNameBy世田谷区体育館(this.targetArena) + "】\\n\\n");
-//                lineMessagingAPI.addMessage(resultLot.toString());
-//                lineMessagingAPI.sendAll();
-                log.info("LINEに通知を送信しました");
-            } else {
-                log.info("通知対象の枠が存在しないため、LINE通知を行いませんでした");
+            // 検索結果とエラーをLINEに送信
+            for (final String notifyLineId : this.notifyLineIdList) {
+                if (resultLot.isTargetExists()) {
+                    LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                    lineMessagingAPI.addMessage("【世田谷区】\\n【" + this.targetArena.name() + "】\\n\\n");
+                    lineMessagingAPI.addMessage(resultLot.toString());
+                    lineMessagingAPI.sendAll();
+                    log.info("LINEに通知を送信しました");
+                } else {
+                    log.info("通知対象の枠が存在しませんでした");
+                    LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, notifyLineId);
+                    lineMessagingAPI.addMessage("【世田谷区】\\n【" + this.targetArena.name() + "】\\n\\n現在、平日夜間または土日祝日の全日で空きがありません");
+                    lineMessagingAPI.addMessage(resultLot.toString());
+                    lineMessagingAPI.sendAll();
+                }
             }
         } catch (Exception e) {
             // ドライバを閉じる
@@ -256,12 +276,6 @@ public class ArenaReservableSearchServiceSetagaya {
 
             log.error("世田谷区の体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
             e.printStackTrace();
-
-            // エラーをLINEに通知
-//            LineMessagingAPI lineMessagingAPI = new LineMessagingAPI(this.channelAccessToken, this.notifyLineIdList);
-//            lineMessagingAPI.addMessage("【世田谷区】\\n【空き状況取得】\\n体育館空き状況の検索中にエラーが発生したため、処理を停止しました。");
-//            lineMessagingAPI.addMessage(e.getMessage());
-//            lineMessagingAPI.sendSeparate();
         }
     }
 }

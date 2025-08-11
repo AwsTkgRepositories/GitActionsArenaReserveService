@@ -1,0 +1,61 @@
+name: 【世田谷区】予約可能一覧取得 (GitActionsArenaReserveService)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ArenaReservableSearchServiceSetagaya:
+    runs-on: ubuntu-latest
+    env:
+      LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }} # LINE通知のアクセストークン
+      NOTIFY_LINE_ID_LIST: ${{ secrets.NOTIFY_LINE_ID_LIST }} # LINE通知の通知先ID
+      EXTEND_NOTIFY_LINE_ID_LIST: ${{ secrets.EXTEND_NOTIFY_LINE_ID_LIST }} # LINE通知の追加通知先ID
+    steps:
+      - name: 開始時間を記録
+        id: start
+        run: |
+          echo "##[group]ジョブ開始時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
+          echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: コードをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Java17をセットアップ
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Chromeをインストール
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Chromeのバージョンを取得
+        id: get_chrome_version
+        run: |
+          version=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          echo "chrome_version=$version" >> $GITHUB_OUTPUT
+
+      - name: ChromeDriverをセットアップ（Chromeのバージョンに合わせる）
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: ${{ steps.get_chrome_version.outputs.chrome_version }}
+
+      - name: Mavenパッケージをビルド(テストコードはコンパイルしない)
+        run: mvn clean package -Dmaven.test.skip=true
+
+      - name: 宮坂区民センターの空き状況を取得
+        env:
+          TARGET_ARENA_NAME: 宮坂区民センター
+          TARGET_COURT_NAME: 体育室
+        run: mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.setagaya.ArenaReservableSearchServiceSetagaya" -Dexec.classpathScope=runtime
+
+      - name: 終了時間を記録
+        run: |
+          echo "##[group]ジョブ終了時間" && date +"%Y-%m-%d %H:%M:%S" && echo "##[endgroup]"
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "実行時間は ${DURATION} 秒でした。"
+        env:
+          START_TIME: ${{ env.START_TIME }}
