@@ -126,8 +126,9 @@ public class WebBrowser {
             "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
         );
 
-        // WebDriverWaitを作成
+        // WebDriverWaitを作成(要素を読み込んだ瞬間にクリックしたいため、ポーリング時間を100msに設定)
         this.wait = new WebDriverWait(this.driver, Duration.ofSeconds(5));
+        this.wait.pollingEvery(Duration.ofMillis(100));
     }
 
     /**
@@ -215,7 +216,7 @@ public class WebBrowser {
      * @param xpath Xpath
      */
     public void clickByXpathWithJS(final String xpath) {
-        WebElement element = this.wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+        WebElement element = this.wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
         ((JavascriptExecutor) this.driver).executeScript("arguments[0].click();", element);
     }
 

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.copel.productpackages.arena.selenium.service.entity.ReserveStatus;
 import com.copel.productpackages.arena.selenium.service.unit.LineMessagingAPI;
 import com.copel.productpackages.arena.selenium.service.unit.OriginalDate;
+import com.copel.productpackages.arena.selenium.service.unit.OriginalDateTime;
 import com.copel.productpackages.arena.selenium.service.unit.WebBrowser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -60,6 +61,11 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      */
     private static String TARGET_TIME_SLOT = System.getenv("TARGET_TIME_SLOT");
     /**
+     * 環境変数.
+     * GitHUB Actionsに入力された対象日付..
+     */
+    private static String TARGET_DATE = System.getenv("TARGET_DATE");
+    /**
      * 定数.
      * 早押し抽選開始時刻の時.
      */
@@ -82,8 +88,25 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      * @throws InterruptedException 
      */
     public static void main(String[] args) throws InterruptedException, IOException {
-        ArenaResereQuickLotteryServiceShinagawa service
-            = new ArenaResereQuickLotteryServiceShinagawa(
+        ArenaResereQuickLotteryServiceShinagawa service;
+        if (TARGET_DATE != null && !TARGET_DATE.isEmpty()) {
+            try {
+                OriginalDate targetDate = new OriginalDate(TARGET_DATE);
+                service = new ArenaResereQuickLotteryServiceShinagawa(
+                        targetDate,
+                        true,
+                        LINE_CHANNEL_ACCESS_TOKEN, 
+                        NOTIFY_LINE_ID_LIST,
+                        ACCOUNT_ID,
+                        ACCOUNT_PASSWORD,
+                        品川区体育館.getEnumByName(TARGET_ARENA_NAME),
+                        TARGET_COURT_NAME,
+                        品川区抽選枠.getEnumByName(TARGET_TIME_SLOT));
+            } catch (IllegalArgumentException e) {
+                log.error("入力された対象日付が不正です。処理を終了します。 入力された値: {}", TARGET_DATE);
+            }
+        } else {
+            service = new ArenaResereQuickLotteryServiceShinagawa(
                     LINE_CHANNEL_ACCESS_TOKEN, 
                     NOTIFY_LINE_ID_LIST,
                     ACCOUNT_ID,
@@ -91,6 +114,7 @@ public class ArenaResereQuickLotteryServiceShinagawa {
                     品川区体育館.getEnumByName(TARGET_ARENA_NAME),
                     TARGET_COURT_NAME,
                     品川区抽選枠.getEnumByName(TARGET_TIME_SLOT));
+        }
         service.execute();
     }
 
@@ -153,6 +177,14 @@ public class ArenaResereQuickLotteryServiceShinagawa {
         this.targetDate = targetDate;
         START_TIME_HOUR = processStartTimeHour;
         START_TIME_MINUTE = processStartTimeMinutes;
+    }
+    public ArenaResereQuickLotteryServiceShinagawa(final OriginalDate targetDate, final boolean isHeadlessMode, final String channelAccessToken, final List<String> notifyLineIdList,final String accountId, final String accountPassword, final 品川区体育館 targetArena, final String targetCourtName, final 品川区抽選枠 予約対象) {
+        this(isHeadlessMode, channelAccessToken, notifyLineIdList,accountId, accountPassword, targetArena, targetCourtName, 予約対象);
+        this.targetDate = targetDate;
+        OriginalDateTime targetTime = new OriginalDateTime();
+        targetTime.plusSeconds(60);
+        START_TIME_HOUR = targetTime.getHour();
+        START_TIME_MINUTE = targetTime.getMinute();
     }
 
     /**
@@ -234,7 +266,7 @@ public class ArenaResereQuickLotteryServiceShinagawa {
                 return;
             }
 
-            // 日本時間で開始時刻まで待機する（バッファを持ち1秒遅れスタートさせる）
+            // 日本時間で開始時刻まで待機する
             log.info("日本時間" + Integer.toString(START_TIME_HOUR) + ":" + Integer.toString(START_TIME_MINUTE) + "まで " + duration.toSeconds() + " 秒待機します...");
             TimeUnit.MILLISECONDS.sleep(duration.toMillis());
 
