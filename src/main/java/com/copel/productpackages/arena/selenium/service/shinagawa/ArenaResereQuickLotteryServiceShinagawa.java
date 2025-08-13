@@ -88,7 +88,7 @@ public class ArenaResereQuickLotteryServiceShinagawa {
      * @throws InterruptedException 
      */
     public static void main(String[] args) throws InterruptedException, IOException {
-        ArenaResereQuickLotteryServiceShinagawa service;
+        ArenaResereQuickLotteryServiceShinagawa service = null;
         if (TARGET_DATE != null && !TARGET_DATE.isEmpty()) {
             try {
                 OriginalDate targetDate = new OriginalDate(TARGET_DATE);
