@@ -232,7 +232,7 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
             log.info("日本時間" + Integer.toString(START_TIME_HOUR) + ":" + Integer.toString(START_TIME_MINUTE) + "になったため、早押し処理を開始します");
 
             // ログインボタンを押下
-            this.webBrowser.clickByXpath("//*[@id=\"btn-login\"]");
+            this.webBrowser.clickByXpathWithJS("//*[@id=\"btn-login\"]");
             log.info("「ログイン」ボタンを押下");
 
             // 利用者番号入力
@@ -244,7 +244,7 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
             log.info("「パスワード」で" + this.accountPassword + "を入力");
 
             // ログインボタン押下
-            this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
+            this.webBrowser.clickByXpathWithJS("//*[@id=\"btn-go\"]");
             log.info("「ログイン」ボタンを押下");
 
             // 「館」を選択
@@ -266,15 +266,15 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
             log.info("枠「" + inputXpathAfterTwoMonth + "」が選択後の値に変化しました");
 
             // 予約ボタン押下
-            this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
+            this.webBrowser.clickByXpathWithJS("//*[@id=\"btn-go\"]");
             log.info("「予約」ボタンを押下");
 
             // 利用規約に同意
-            this.webBrowser.clickByXpath("//*[@id=\"rule\"]/div[3]/label[1]");
+            this.webBrowser.clickByXpathWithJS("//*[@id=\"rule\"]/div[3]/label[1]");
             log.info("「利用規約に同意する」ラジオボタンを選択");
 
             // 確認ボタン押下
-            this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
+            this.webBrowser.clickByXpathWithJS("//*[@id=\"btn-go\"]");
             log.info("「確認」ボタンを押下");
 
             // 催し物名入力
@@ -286,7 +286,7 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
             log.info("「利用人数」を入力");
 
             // 送信ボタン押下
-            this.webBrowser.clickByXpath("//*[@id=\"btn-go\"]");
+            this.webBrowser.clickByXpathWithJS("//*[@id=\"btn-go\"]");
             log.info("「送信」ボタンを押下");
 
             // アラートのOKを押下
