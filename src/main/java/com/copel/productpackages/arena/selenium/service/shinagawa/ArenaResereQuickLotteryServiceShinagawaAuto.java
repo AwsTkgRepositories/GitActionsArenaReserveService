@@ -214,7 +214,7 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
 
             // 開始時刻と現在時刻の差分を作成する
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"));
-            ZonedDateTime targetTime = now.withHour(START_TIME_HOUR).withMinute(START_TIME_MINUTE).withSecond(1).withNano(0);
+            ZonedDateTime targetTime = now.withHour(START_TIME_HOUR).withMinute(START_TIME_MINUTE).withSecond(0).withNano(100000000);
             Duration duration = Duration.between(now, targetTime);
 
             // 開始時刻以降に実行された場合、処理終了する
@@ -224,7 +224,7 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
                 return;
             }
 
-            // 日本時間で開始時刻まで待機する（バッファを持ち1秒遅れスタートさせる）
+            // 日本時間で開始時刻まで待機する
             log.info("日本時間" + Integer.toString(START_TIME_HOUR) + ":" + Integer.toString(START_TIME_MINUTE) + "まで " + duration.toSeconds() + " 秒待機します...");
             TimeUnit.MILLISECONDS.sleep(duration.toMillis());
 
