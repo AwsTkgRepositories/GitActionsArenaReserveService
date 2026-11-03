@@ -237,11 +237,11 @@ public class ArenaResereQuickLotteryServiceShinagawaAuto {
 
             // 利用者番号入力
             this.webBrowser.sendKeysByXpath("//*[@id=\"userId\"]", this.accountId);
-            log.info("「利用者番号」で" + this.accountId + "を入力");
+            log.info("「利用者番号」で****を入力");
 
             // パスワード入力
             this.webBrowser.sendKeysByXpath("//*[@id=\"password\"]", this.accountPassword);
-            log.info("「パスワード」で" + this.accountPassword + "を入力");
+            log.info("「パスワード」で****を入力");
 
             // ログインボタン押下
             this.webBrowser.clickByXpathWithJS("//*[@id=\"btn-go\"]");
