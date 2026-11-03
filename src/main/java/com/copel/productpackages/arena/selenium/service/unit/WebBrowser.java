@@ -374,6 +374,31 @@ public class WebBrowser {
     }
 
     /**
+     * WebDriverを取得する（複雑な画面操作用）.
+     *
+     * @return WebDriver
+     */
+    public WebDriver getDriver() {
+        return this.driver;
+    }
+
+    /**
+     * スクリーンショットを保存する.
+     *
+     * @param filePath 保存先
+     */
+    public void saveScreenshot(final String filePath) {
+        try {
+            byte[] bytes = ((org.openqa.selenium.TakesScreenshot) this.driver).getScreenshotAs(org.openqa.selenium.OutputType.BYTES);
+            java.nio.file.Path path = java.nio.file.Paths.get(filePath);
+            if (path.getParent() != null) java.nio.file.Files.createDirectories(path.getParent());
+            java.nio.file.Files.write(path, bytes);
+        } catch (Exception e) {
+            // スクリーンショット失敗は処理に影響させない
+        }
+    }
+
+    /**
      * ドライバを終了する.
      */
     public void quit() {

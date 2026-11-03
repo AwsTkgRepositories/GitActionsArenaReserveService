@@ -56,14 +56,14 @@ jobs:
           TARGET_ARENA_NAME: スクエア荏原
         run: |
           echo "TARGET_ARENA_NAME = $TARGET_ARENA_NAME"
-          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaResereMonthlyLotteryServiceShinagawa" -Dexec.classpathScope=runtime
+          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.shinagawa.ArenaResereMonthlyLotteryServiceShinagawa" -Dexec.classpathScope=runtime
 
       - name: 総合体育館の毎月抽選の申し込み処理を実行
         env:
           TARGET_ARENA_NAME: 総合体育館
         run: |
           echo "TARGET_ARENA_NAME = $TARGET_ARENA_NAME"
-          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.ArenaResereMonthlyLotteryServiceShinagawa" -Dexec.classpathScope=runtime
+          mvn exec:java -Dexec.mainClass="com.copel.productpackages.arena.selenium.service.shinagawa.ArenaResereMonthlyLotteryServiceShinagawa" -Dexec.classpathScope=runtime
 
       - name: 戸越体育館の毎月抽選の申し込み処理を実行
         env:
