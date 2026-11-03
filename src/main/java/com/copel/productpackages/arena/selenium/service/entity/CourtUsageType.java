@@ -31,7 +31,8 @@ public enum CourtUsageType {
                 } else if ("体育室B".equals(courtName)) {
                     return 半面2;
                 } else {
-                    return 全面;
+                    // せせらぎ館には全面がないため、未指定・不明時は体育室Aとする
+                    return 半面1;
                 }
             case 大森スポーツセンター:
                 if ("主競技場".equals(courtName)) {
